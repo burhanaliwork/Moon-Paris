@@ -133,6 +133,12 @@ export default function WelcomePage() {
                 className="flex flex-col gap-6"
               >
                 <div className="text-center mb-6">
+                  <img
+                    src={`${import.meta.env.BASE_URL}images/moon-paris-logo2-nobg.png`}
+                    alt="Moon Paris"
+                    className="w-40 h-40 mx-auto mb-4 object-contain drop-shadow-xl"
+                    style={{ filter: 'drop-shadow(0 0 20px rgba(201,168,76,0.35))' }}
+                  />
                   <h2 className="text-2xl font-bold text-foreground mb-2 font-display">مرحباً بك في Moon Paris</h2>
                   <p className="text-muted-foreground text-sm">اختر طريقة الدخول للمتجر</p>
                 </div>
