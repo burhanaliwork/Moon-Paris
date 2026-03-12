@@ -4,6 +4,7 @@ import authRouter from "./auth";
 import productsRouter from "./products";
 import ordersRouter from "./orders";
 import adminRouter from "./admin";
+import promotionsRouter from "./promotions";
 
 const router: IRouter = Router();
 
@@ -12,6 +13,7 @@ router.use("/auth", authRouter);
 router.use("/products", productsRouter);
 router.use("/orders", ordersRouter);
 router.use("/admin", adminRouter);
+router.use("/promotions", promotionsRouter);
 
 // Site settings
 router.get("/site-settings", async (req: any, res: any) => {

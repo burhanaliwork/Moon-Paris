@@ -3,3 +3,4 @@ export * from "./products";
 export * from "./orders";
 export * from "./otp";
 export * from "./settings";
+export * from "./promotions";

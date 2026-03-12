@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'wouter';
-import { LayoutDashboard, Package, ShoppingCart, Users, Settings, LogOut, Store } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingCart, Users, Settings, LogOut, Store, Tag } from 'lucide-react';
 import { useLogoutUser, useGetMe } from '@workspace/api-client-react';
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -18,6 +18,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
     { name: 'الرئيسية', path: '/admin', icon: LayoutDashboard },
     { name: 'المنتجات', path: '/admin/products', icon: Package },
     { name: 'الطلبات', path: '/admin/orders', icon: ShoppingCart },
+    { name: 'العروض والإعلانات', path: '/admin/promotions', icon: Tag },
     { name: 'المستخدمين', path: '/admin/users', icon: Users },
     { name: 'إعدادات الموقع', path: '/admin/settings', icon: Settings },
   ];

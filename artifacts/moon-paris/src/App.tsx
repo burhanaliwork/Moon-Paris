@@ -17,6 +17,7 @@ import AdminProducts from "@/pages/admin/products";
 import AdminOrders from "@/pages/admin/orders";
 import AdminUsers from "@/pages/admin/users";
 import AdminSettings from "@/pages/admin/settings";
+import AdminPromotions from "@/pages/admin/promotions";
 
 const queryClient = new QueryClient();
 
@@ -49,6 +50,7 @@ function Router() {
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/admin/products" component={AdminProducts} />
       <Route path="/admin/orders" component={AdminOrders} />
+      <Route path="/admin/promotions" component={AdminPromotions} />
       <Route path="/admin/users" component={AdminUsers} />
       <Route path="/admin/settings" component={AdminSettings} />
 
