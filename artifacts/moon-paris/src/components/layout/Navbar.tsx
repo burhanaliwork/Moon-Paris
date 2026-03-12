@@ -54,7 +54,7 @@ export function Navbar() {
                 e.currentTarget.src = "https://images.unsplash.com/photo-1596462502278-27bf84033001?w=100&h=100&fit=crop&q=80"; // fallback
               }}
             />
-            <span className="font-display text-2xl font-bold tracking-wider gold-gradient-text">مون باريس</span>
+            <span className="font-display text-2xl font-bold tracking-wider gold-gradient-text">Moon Paris</span>
           </Link>
 
           {/* Desktop Nav */}

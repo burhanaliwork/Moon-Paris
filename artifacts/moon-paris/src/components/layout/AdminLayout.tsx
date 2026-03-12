@@ -35,7 +35,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
             <img src={`${import.meta.env.BASE_URL}images/logo-gold.png`} alt="Logo" className="w-10 h-10" onError={e=>e.currentTarget.style.display='none'}/>
             <div>
               <h2 className="font-display font-bold gold-gradient-text text-xl leading-none">الإدارة</h2>
-              <span className="text-xs text-muted-foreground">مون باريس</span>
+              <span className="text-xs text-muted-foreground">Moon Paris</span>
             </div>
           </div>
         </div>

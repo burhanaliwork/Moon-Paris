@@ -142,7 +142,7 @@ export default function Home() {
                 الجودة الأصيلة، <br/><span className="gold-gradient-text">مباشرة من باريس</span>
               </h2>
               <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
-                {settings?.aboutText || "نحرص في مون باريس على اختيار أجود أنواع العطور التي تعكس الفخامة والرقي. كل قطرة تحكي قصة، وكل زجاجة هي تحفة فنية مصممة لتدوم طويلاً وتترك أثراً لا ينسى في كل مكان تذهب إليه."}
+                {settings?.aboutText || "نحرص في Moon Paris على اختيار أجود أنواع العطور التي تعكس الفخامة والرقي. كل قطرة تحكي قصة، وكل زجاجة هي تحفة فنية مصممة لتدوم طويلاً وتترك أثراً لا ينسى في كل مكان تذهب إليه."}
               </p>
               <div className="grid grid-cols-2 gap-6">
                 <div>

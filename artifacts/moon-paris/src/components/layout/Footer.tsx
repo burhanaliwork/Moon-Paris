@@ -11,7 +11,7 @@ export function Footer() {
           <div className="md:col-span-1">
             <div className="flex items-center gap-3 mb-6">
                <img src={`${import.meta.env.BASE_URL}images/logo-gold.png`} alt="Logo" className="w-10 h-10 object-contain" onError={(e) => e.currentTarget.style.display = 'none'} />
-               <span className="font-display text-2xl font-bold gold-gradient-text">مون باريس</span>
+               <span className="font-display text-2xl font-bold gold-gradient-text">Moon Paris</span>
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed mb-6">
               نقدم لكم أرقى العطور المستوحاة من سحر باريس، مصممة خصيصاً لتناسب الذوق العراقي الرفيع.
@@ -60,7 +60,7 @@ export function Footer() {
         
         <div className="border-t border-white/5 pt-8 text-center flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-muted-foreground text-sm">
-            &copy; {new Date().getFullYear()} مون باريس للعطور. جميع الحقوق محفوظة.
+            &copy; {new Date().getFullYear()} Moon Paris للعطور. جميع الحقوق محفوظة.
           </p>
           <div className="flex gap-4">
             <span className="text-xs text-muted-foreground">صنع بحب في Replit</span>

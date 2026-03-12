@@ -133,7 +133,7 @@ export default function WelcomePage() {
                 className="flex flex-col gap-6"
               >
                 <div className="text-center mb-6">
-                  <h2 className="text-2xl font-bold text-foreground mb-2 font-display">مرحباً بك في مون باريس</h2>
+                  <h2 className="text-2xl font-bold text-foreground mb-2 font-display">مرحباً بك في Moon Paris</h2>
                   <p className="text-muted-foreground text-sm">اختر طريقة الدخول للمتجر</p>
                 </div>
 
