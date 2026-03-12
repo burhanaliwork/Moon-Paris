@@ -96,21 +96,6 @@ export default function WelcomePage() {
   return (
     <div className="min-h-screen bg-background flex flex-col md:flex-row font-sans">
       
-      {/* Visual Side */}
-      <div className="hidden md:flex flex-1 relative items-center justify-center overflow-hidden border-l border-white/10">
-        <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, #2a1a0e 0%, #0d0906 60%, #000 100%)' }} />
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 30% 20%, #c9a84c33 0%, transparent 60%), radial-gradient(circle at 70% 80%, #c9a84c22 0%, transparent 50%)' }} />
-        <div className="relative z-10 text-center max-w-lg p-8 flex flex-col items-center">
-          <img
-            src={`${import.meta.env.BASE_URL}images/moon-paris-logo-nobg.png`}
-            alt="Moon Paris"
-            className="w-[460px] h-[460px] mx-auto object-contain drop-shadow-2xl"
-            style={{ filter: 'drop-shadow(0 0 50px rgba(201,168,76,0.45))' }}
-          />
-          <p className="text-lg text-muted-foreground font-light mt-2 tracking-widest uppercase opacity-70">Parfums & Fragrances</p>
-        </div>
-      </div>
-
       {/* Auth Form Side */}
       <div className="flex-1 flex items-center justify-center p-6 md:p-12 relative">
         
