@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "مون باريس - عطور"
+version = "1.0.0"
+id = "artifacts/moon-paris"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+localPort = 24728
+name = "web"
+paths = ["/"]
+
+[services.development]
+run = "pnpm --filter @workspace/moon-paris run dev"
+
+[services.env]
+PORT = "24728"
+BASE_PATH = "/"
+
+[services.production]
+build = ["pnpm", "--filter", "@workspace/moon-paris", "run", "build"]
+publicDir = "artifacts/moon-paris/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"

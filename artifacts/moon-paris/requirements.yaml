@@ -1,0 +1,25 @@
+packages:
+  "framer-motion": "For premium smooth animations and page transitions"
+  "zustand": "For elegant global state management (Cart, Auth)"
+  "react-hook-form": "For robust form handling in auth and checkout"
+  "@hookform/resolvers": "For zod validation integration with forms"
+  "recharts": "For admin dashboard analytics visualization"
+  "date-fns": "For elegant date formatting in orders and admin views"
+  "clsx": "For dynamic class merging"
+  "tailwind-merge": "For merging tailwind classes safely"
+
+images:
+  - path: "artifacts/moon-paris/public/images/hero-perfume.png"
+    description: "Ultra luxury cinematic shot of an elegant dark glass perfume bottle with gold accents, deep black background with subtle gold dust particles, highly aesthetic, 8k resolution, photorealistic"
+    aspect_ratio: "16:9"
+  - path: "artifacts/moon-paris/public/images/logo-gold.png"
+    description: "Minimalist elegant logo for a luxury perfume brand named Moon Paris, featuring a delicate crescent moon and sophisticated typography in metallic gold on a transparent or pure black background"
+    aspect_ratio: "1:1"
+  - path: "artifacts/moon-paris/public/images/perfume-placeholder.png"
+    description: "A single elegant luxury perfume bottle on a dark reflective surface, cinematic lighting, gold and obsidian tones, high-end commercial product photography"
+    aspect_ratio: "1:1"
+
+notes:
+  - Application uses RTL (Right-to-Left) layout for Arabic natively via dir="rtl"
+  - API hooks are imported directly from @workspace/api-client-react
+  - Complex authentication flow supports guest bypass, OTP registration, and XOR email/password combinations
