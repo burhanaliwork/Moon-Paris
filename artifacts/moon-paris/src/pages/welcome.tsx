@@ -98,23 +98,16 @@ export default function WelcomePage() {
       
       {/* Visual Side */}
       <div className="hidden md:flex flex-1 relative items-center justify-center overflow-hidden border-l border-white/10">
-        {/* Unsplash abstract luxury dark gold background if generated image fails */}
-        <div className="absolute inset-0 bg-black">
-           {/* luxury perfume bottle */}
-           <img 
-            src={`${import.meta.env.BASE_URL}images/hero-perfume.png`} 
-            alt="Luxury Perfume" 
-            className="absolute inset-0 w-full h-full object-cover opacity-60"
-            onError={(e) => {
-              e.currentTarget.src = "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=1200";
-            }}
+        <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, #2a1a0e 0%, #0d0906 60%, #000 100%)' }} />
+        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 30% 20%, #c9a84c33 0%, transparent 60%), radial-gradient(circle at 70% 80%, #c9a84c22 0%, transparent 50%)' }} />
+        <div className="relative z-10 text-center max-w-lg p-8 flex flex-col items-center">
+          <img
+            src={`${import.meta.env.BASE_URL}images/moon-paris-logo-nobg.png`}
+            alt="Moon Paris"
+            className="w-[460px] h-[460px] mx-auto object-contain drop-shadow-2xl"
+            style={{ filter: 'drop-shadow(0 0 50px rgba(201,168,76,0.45))' }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-        </div>
-        <div className="relative z-10 text-center max-w-md p-8">
-           <img src={`${import.meta.env.BASE_URL}images/logo-gold.png`} alt="Moon Paris" className="w-32 h-32 mx-auto mb-8 drop-shadow-2xl" />
-           <h1 className="font-display text-5xl font-bold gold-gradient-text mb-4">مون باريس</h1>
-           <p className="text-xl text-muted-foreground font-light">عالم من الجاذبية والفخامة المستوحاة من سحر العطور الفرنسية الأصيلة.</p>
+          <p className="text-lg text-muted-foreground font-light mt-2 tracking-widest uppercase opacity-70">Parfums & Fragrances</p>
         </div>
       </div>
 
