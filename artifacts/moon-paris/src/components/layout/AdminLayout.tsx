@@ -32,7 +32,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
       <aside className="w-full md:w-64 bg-card border-l border-white/5 flex flex-col shrink-0 overflow-y-auto">
         <div className="p-6 border-b border-white/5">
           <div className="flex items-center gap-3">
-            <img src={`${import.meta.env.BASE_URL}images/logo-gold.png`} alt="Logo" className="w-10 h-10" onError={e=>e.currentTarget.style.display='none'}/>
+            <img src={`${import.meta.env.BASE_URL}images/moon-paris-logo2-nobg.png`} alt="Moon Paris" className="w-10 h-10 object-contain" />
             <div>
               <h2 className="font-display font-bold gold-gradient-text text-xl leading-none">الإدارة</h2>
               <span className="text-xs text-muted-foreground">Moon Paris</span>
