@@ -61,7 +61,6 @@ export default function WelcomePage() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!otpVerified) return toast({ title: "تنبيه", description: "يجب التحقق من رقم الهاتف أولاً", variant: "destructive" });
-    if (!regData.email || !regData.password) return toast({ title: "تنبيه", description: "يرجى إدخال البريد الإلكتروني وكلمة المرور معاً", variant: "destructive" });
     
     try {
       await registerMutation.mutateAsync({ data: regData });
@@ -202,18 +201,16 @@ export default function WelcomePage() {
                     <p className="text-xs text-muted-foreground mb-3 text-center">أدخل البريد الإلكتروني وكلمة المرور لتأمين حسابك</p>
                     <div className="space-y-3">
                       <LuxuryInput 
-                        placeholder="البريد الإلكتروني" 
+                        placeholder="البريد الإلكتروني (اختياري)" 
                         type="email" 
                         dir="ltr"
-                        required
                         value={regData.email} 
                         onChange={e => setRegData({...regData, email: e.target.value})} 
                       />
                       <LuxuryInput 
-                        placeholder="كلمة المرور" 
+                        placeholder="كلمة المرور (اختياري)" 
                         type="password" 
                         dir="ltr"
-                        required
                         value={regData.password} 
                         onChange={e => setRegData({...regData, password: e.target.value})} 
                       />
