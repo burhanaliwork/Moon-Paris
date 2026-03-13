@@ -144,7 +144,7 @@ export default function WelcomePage() {
                   <div className="space-y-2">
                     <div className="flex gap-2">
                       <LuxuryInput 
-                        placeholder="رقم الهاتف (للواتساب)" 
+                        placeholder="رقم الهاتف" 
                         type="tel" 
                         dir="auto" 
                         required 
@@ -154,8 +154,8 @@ export default function WelcomePage() {
                         className="text-right"
                       />
                       {!otpVerified && (
-                        <LuxuryButton type="button" variant="secondary" onClick={handleSendOtpRegister} isLoading={sendOtpMutation.isPending} className="shrink-0">
-                          إرسال كود
+                        <LuxuryButton type="button" variant="secondary" onClick={handleSendOtpRegister} isLoading={sendOtpMutation.isPending} className="shrink-0 text-xs">
+                          إرسال كود للواتساب
                         </LuxuryButton>
                       )}
                     </div>
