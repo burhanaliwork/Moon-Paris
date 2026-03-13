@@ -62,9 +62,6 @@ export function Footer() {
           <p className="text-muted-foreground text-sm">
             &copy; {new Date().getFullYear()} Moon Paris للعطور. جميع الحقوق محفوظة.
           </p>
-          <div className="flex gap-4">
-            <span className="text-xs text-muted-foreground">صنع بحب في Replit</span>
-          </div>
         </div>
       </div>
     </footer>
