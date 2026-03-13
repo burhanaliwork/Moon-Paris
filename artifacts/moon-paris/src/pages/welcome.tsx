@@ -61,8 +61,7 @@ export default function WelcomePage() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!otpVerified) return toast({ title: "تنبيه", description: "يجب التحقق من رقم الهاتف أولاً", variant: "destructive" });
-    if (!regData.email && !regData.password) return toast({ title: "تنبيه", description: "يرجى إدخال البريد الإلكتروني أو كلمة المرور", variant: "destructive" });
-    if (regData.email && regData.password) return toast({ title: "تنبيه", description: "يرجى اختيار إما البريد الإلكتروني أو كلمة المرور، وليس كلاهما", variant: "destructive" });
+    if (!regData.email || !regData.password) return toast({ title: "تنبيه", description: "يرجى إدخال البريد الإلكتروني وكلمة المرور معاً", variant: "destructive" });
     
     try {
       await registerMutation.mutateAsync({ data: regData });
@@ -172,6 +171,7 @@ export default function WelcomePage() {
                         value={regData.phone} 
                         onChange={e => setRegData({...regData, phone: e.target.value})} 
                         className="text-right"
+                        style={{ textAlign: 'right' }}
                       />
                       {!otpVerified && (
                         <LuxuryButton type="button" variant="secondary" onClick={handleSendOtpRegister} isLoading={sendOtpMutation.isPending} className="shrink-0">
@@ -199,26 +199,23 @@ export default function WelcomePage() {
                   </div>
 
                   <div className="p-4 rounded-xl bg-secondary/30 border border-primary/20">
-                    <p className="text-xs text-muted-foreground mb-3 text-center">اختر طريقة واحدة لتأمين حسابك (إيميل أو كلمة مرور)</p>
+                    <p className="text-xs text-muted-foreground mb-3 text-center">أدخل البريد الإلكتروني وكلمة المرور لتأمين حسابك</p>
                     <div className="space-y-3">
                       <LuxuryInput 
-                        placeholder="البريد الإلكتروني (اختياري)" 
+                        placeholder="البريد الإلكتروني" 
                         type="email" 
                         dir="ltr"
-                        disabled={!!regData.password}
+                        required
                         value={regData.email} 
                         onChange={e => setRegData({...regData, email: e.target.value})} 
-                        className={regData.password ? "opacity-30" : ""}
                       />
-                      <div className="text-center text-xs text-muted-foreground">- أو -</div>
                       <LuxuryInput 
-                        placeholder="كلمة المرور (اختياري)" 
+                        placeholder="كلمة المرور" 
                         type="password" 
                         dir="ltr"
-                        disabled={!!regData.email}
+                        required
                         value={regData.password} 
                         onChange={e => setRegData({...regData, password: e.target.value})} 
-                        className={regData.email ? "opacity-30" : ""}
                       />
                     </div>
                   </div>
