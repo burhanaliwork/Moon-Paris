@@ -1,18 +1,16 @@
 import React, { useState } from 'react';
 import { useLocation } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useStore } from '@/store/use-store';
 import { useLoginUser, useRegisterUser, useSendOtp, useVerifyOtp } from '@workspace/api-client-react';
 import { LuxuryButton, LuxuryInput, LuxurySelect } from '@/components/ui/luxury-components';
 import { IRAQI_GOVERNORATES } from '@/lib/utils';
-import { User, LogIn, Store, ArrowRight, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { User, LogIn, ArrowRight, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 type ViewState = 'options' | 'register' | 'login';
 
 export default function WelcomePage() {
   const [, setLocation] = useLocation();
-  const setGuestMode = useStore(state => state.setGuestMode);
   const [view, setView] = useState<ViewState>('options');
   
   const loginMutation = useLoginUser();
@@ -31,11 +29,6 @@ export default function WelcomePage() {
   const [loginData, setLoginData] = useState({ phone: '', email: '', password: '', otpCode: '' });
   const [loginMethod, setLoginMethod] = useState<'phone' | 'email'>('phone');
   const [loginOtpSent, setLoginOtpSent] = useState(false);
-
-  const handleGuestEntry = () => {
-    setGuestMode(true);
-    setLocation('/');
-  };
 
   const handleSendOtpRegister = async () => {
     if (!regData.phone) return toast({ title: "خطأ", description: "يرجى إدخال رقم الهاتف", variant: "destructive" });
@@ -65,7 +58,6 @@ export default function WelcomePage() {
     try {
       await registerMutation.mutateAsync({ data: regData });
       toast({ title: "أهلاً بك", description: "تم إنشاء حسابك بنجاح" });
-      setGuestMode(false);
       setLocation('/');
     } catch (e: any) {
       toast({ title: "خطأ", description: e.message || "فشل إنشاء الحساب", variant: "destructive" });
@@ -84,7 +76,6 @@ export default function WelcomePage() {
 
       await loginMutation.mutateAsync({ data: loginData });
       toast({ title: "أهلاً بك", description: "تم تسجيل الدخول بنجاح" });
-      setGuestMode(false);
       setLocation('/');
     } catch (e: any) {
       toast({ title: "خطأ", description: e.message || "بيانات الدخول غير صحيحة", variant: "destructive" });
@@ -131,15 +122,6 @@ export default function WelcomePage() {
                   <ArrowRight className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
                 </LuxuryButton>
 
-                <div className="relative my-4">
-                  <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-border"></div></div>
-                  <div className="relative flex justify-center text-xs uppercase"><span className="bg-card px-4 text-muted-foreground">أو</span></div>
-                </div>
-
-                <LuxuryButton variant="ghost" size="lg" className="w-full flex justify-between group border border-border" onClick={handleGuestEntry}>
-                  <span className="flex items-center gap-3"><Store className="w-5 h-5" /> الدخول بدون حساب</span>
-                  <ArrowRight className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-                </LuxuryButton>
               </motion.div>
             )}
 

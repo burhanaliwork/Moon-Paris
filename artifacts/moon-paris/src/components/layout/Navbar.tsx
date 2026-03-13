@@ -13,8 +13,6 @@ export function Navbar() {
   const cart = useStore(state => state.cart);
   const { data: user } = useGetMe({ query: { retry: false } });
   const logoutMutation = useLogoutUser();
-  const setGuestMode = useStore(state => state.setGuestMode);
-
   const cartCount = cart.reduce((acc, item) => acc + item.cartQuantity, 0);
 
   useEffect(() => {
@@ -28,7 +26,6 @@ export function Navbar() {
   const handleLogout = async () => {
     try {
       await logoutMutation.mutateAsync();
-      setGuestMode(false);
       setLocation('/welcome');
     } catch (e) {
       console.error(e);

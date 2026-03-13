@@ -15,17 +15,13 @@ interface AppState {
   clearCart: () => void;
   cartTotal: () => number;
   
-  // Auth & Guest Mode
-  isGuest: boolean;
-  setGuestMode: (status: boolean) => void;
 }
 
 export const useStore = create<AppState>()(
   persist(
     (set, get) => ({
       cart: [],
-      isGuest: false,
-      
+
       addToCart: (product, quantity = 1) => set((state) => {
         const existing = state.cart.find(item => item.id === product.id);
         if (existing) {
@@ -57,7 +53,6 @@ export const useStore = create<AppState>()(
         return cart.reduce((total, item) => total + (item.price * item.cartQuantity), 0);
       },
 
-      setGuestMode: (status) => set({ isGuest: status }),
     }),
     {
       name: 'moon-paris-storage',
