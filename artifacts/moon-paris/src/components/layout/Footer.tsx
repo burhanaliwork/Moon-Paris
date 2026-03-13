@@ -10,7 +10,7 @@ export function Footer() {
           
           <div className="md:col-span-1">
             <div className="flex items-center gap-3 mb-6">
-               <img src={`${import.meta.env.BASE_URL}images/logo-gold.png`} alt="Logo" className="w-10 h-10 object-contain" onError={(e) => e.currentTarget.style.display = 'none'} />
+               <img src={`${import.meta.env.BASE_URL}images/moon-paris-logo2-nobg.png`} alt="Moon Paris" className="w-10 h-10 object-contain" />
                <span className="font-display text-2xl font-bold gold-gradient-text">Moon Paris</span>
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed mb-6">

@@ -47,12 +47,9 @@ export function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
             <img 
-              src={`${import.meta.env.BASE_URL}images/logo-gold.png`} 
+              src={`${import.meta.env.BASE_URL}images/moon-paris-logo2-nobg.png`} 
               alt="Moon Paris" 
               className="w-10 h-10 object-contain group-hover:scale-105 transition-transform"
-              onError={(e) => {
-                e.currentTarget.src = "https://images.unsplash.com/photo-1596462502278-27bf84033001?w=100&h=100&fit=crop&q=80"; // fallback
-              }}
             />
             <span className="font-display text-2xl font-bold tracking-wider gold-gradient-text">Moon Paris</span>
           </Link>
