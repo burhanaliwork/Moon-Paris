@@ -146,13 +146,12 @@ export default function WelcomePage() {
                       <LuxuryInput 
                         placeholder="رقم الهاتف (للواتساب)" 
                         type="tel" 
-                        dir="ltr" 
+                        dir="auto" 
                         required 
                         disabled={otpVerified}
                         value={regData.phone} 
                         onChange={e => setRegData({...regData, phone: e.target.value})} 
                         className="text-right"
-                        style={{ textAlign: 'right' }}
                       />
                       {!otpVerified && (
                         <LuxuryButton type="button" variant="secondary" onClick={handleSendOtpRegister} isLoading={sendOtpMutation.isPending} className="shrink-0">
@@ -241,7 +240,7 @@ export default function WelcomePage() {
                       <LuxuryInput 
                         placeholder="رقم الهاتف" 
                         type="tel" 
-                        dir="ltr" 
+                        dir="auto" 
                         required 
                         disabled={loginOtpSent}
                         value={loginData.phone} 
