@@ -5,15 +5,16 @@ import { useStore } from '@/store/use-store';
 import { useGetMe, useCreateOrder } from '@workspace/api-client-react';
 import { formatPrice } from '@/lib/utils';
 import { LuxuryButton } from '@/components/ui/luxury-components';
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import { Trash2, Plus, Minus, ShoppingBag, ArrowRight, CheckCircle, User, Phone, MapPin } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { motion } from 'framer-motion';
 
 export default function CartPage() {
-  const { cart, removeFromCart, updateQuantity, cartTotal, clearCart } = useStore();
+  const { cart, removeFromCart, updateQuantity, cartTotal, clearCart, isGuest, setGuestMode } = useStore();
   const { data: user } = useGetMe({ query: { retry: false } });
   const createOrderMutation = useCreateOrder();
+  const [, setLocation] = useLocation();
 
   const [notes, setNotes] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
@@ -21,6 +22,13 @@ export default function CartPage() {
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
     if (cart.length === 0) return;
+
+    if (isGuest && !user) {
+      toast({ title: "يجب إنشاء حساب", description: "لإتمام الطلب يجب تسجيل الدخول أو إنشاء حساب جديد", variant: "destructive" });
+      setGuestMode(false);
+      setLocation('/welcome');
+      return;
+    }
 
     if (!user?.fullName || !user?.phone || !user?.governorate || !user?.district) {
       toast({ title: "معلومات ناقصة", description: "يرجى إكمال بيانات حسابك (الاسم، الهاتف، المحافظة، المنطقة) من صفحة الإعدادات", variant: "destructive" });

@@ -122,7 +122,7 @@ export default function AdminProducts() {
                   <td className="px-6 py-4">
                     <div className="flex items-center justify-end gap-2">
                       <button onClick={() => openEditDialog(p)} className="p-2 text-muted-foreground hover:text-primary transition-colors bg-secondary/50 rounded-lg"><Edit size={16} /></button>
-                      <button onClick={() => handleDelete(p.id)} className="p-2 text-muted-foreground hover:text-destructive transition-colors bg-secondary/50 rounded-lg"><Trash2 size={16} /></button>
+                      <button onClick={() => handleDelete(p.id)} className="p-2 text-destructive hover:bg-destructive hover:text-white transition-colors bg-destructive/10 rounded-lg"><Trash2 size={16} /></button>
                     </div>
                   </td>
                 </tr>

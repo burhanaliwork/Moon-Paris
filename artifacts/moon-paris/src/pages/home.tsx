@@ -84,45 +84,42 @@ export default function Home() {
           </div>
 
           {isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 gap-4">
               {[1,2,3,4].map(i => (
-                <div key={i} className="animate-pulse bg-card rounded-2xl h-96 border border-white/5"></div>
+                <div key={i} className="animate-pulse bg-card rounded-2xl h-72 border border-white/5"></div>
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {featuredProducts.map((product) => (
+            <div className="grid grid-cols-2 gap-4">
+              {latestProducts.map((product) => (
                 <Link key={product.id} href={`/product/${product.id}`}>
                   <motion.div 
-                    whileHover={{ y: -10 }}
+                    whileHover={{ y: -4 }}
                     className="group bg-card rounded-2xl overflow-hidden border border-white/5 hover:border-primary/50 transition-all duration-300 shadow-lg hover:shadow-primary/20"
                   >
-                    <div className="aspect-[4/5] relative bg-secondary/30 p-8 flex items-center justify-center overflow-hidden">
+                    <div className="aspect-square relative bg-secondary/30 p-4 flex items-center justify-center overflow-hidden">
                       <img 
                         src={product.imageUrl || product.images[0] || `${import.meta.env.BASE_URL}images/perfume-placeholder.png`} 
                         alt={product.nameAr}
                         className="w-full h-full object-contain drop-shadow-2xl group-hover:scale-110 transition-transform duration-700"
                         onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1594035910387-fea47794261f?w=400&h=500&fit=crop"; }}
                       />
-                      {/* Action Overlay */}
-                      <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                        <LuxuryButton 
-                          className="w-full shadow-xl" 
-                          onClick={(e) => handleAddToCart(e, product)}
-                        >
-                          <ShoppingBag className="w-4 h-4 me-2" /> أضف للسلة
-                        </LuxuryButton>
-                      </div>
                     </div>
-                    <div className="p-6">
-                      <div className="text-xs text-primary mb-2 font-medium tracking-wider">{product.brand || product.category}</div>
-                      <h3 className="text-xl font-bold text-foreground mb-2 truncate">{product.nameAr}</h3>
-                      <div className="flex items-center justify-between">
-                        <span className="text-lg font-bold text-foreground">{formatPrice(product.price)}</span>
+                    <div className="p-3 md:p-5">
+                      <div className="text-xs text-primary mb-1 font-medium tracking-wider truncate">{product.brand || product.category}</div>
+                      <h3 className="text-sm md:text-lg font-bold text-foreground mb-2 truncate">{product.nameAr}</h3>
+                      <div className="flex items-center justify-between gap-1">
+                        <span className="text-sm md:text-base font-bold gold-gradient-text">{formatPrice(product.price)}</span>
                         {product.originalPrice && (
-                          <span className="text-sm text-muted-foreground line-through">{formatPrice(product.originalPrice)}</span>
+                          <span className="text-xs text-muted-foreground line-through">{formatPrice(product.originalPrice)}</span>
                         )}
                       </div>
+                      <button
+                        onClick={(e) => handleAddToCart(e, product)}
+                        className="mt-3 w-full flex items-center justify-center gap-2 py-2 rounded-xl bg-primary/10 hover:bg-primary hover:text-black text-primary text-xs font-bold transition-all duration-200"
+                      >
+                        <ShoppingBag className="w-3.5 h-3.5" /> أضف للسلة
+                      </button>
                     </div>
                   </motion.div>
                 </Link>
