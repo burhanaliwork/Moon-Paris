@@ -82,7 +82,7 @@ export default function ProductPage() {
           <div className="flex flex-col justify-center">
             <div className="mb-8">
               <div className="flex items-center gap-3 mb-4">
-                <span className="px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full">{product.brand || 'مون باريس'}</span>
+                <span className="px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full">{product.brand || 'Moon Paris'}</span>
                 {product.featured && <span className="px-3 py-1 bg-secondary text-foreground text-xs font-bold rounded-full">الأكثر مبيعاً</span>}
               </div>
               <h1 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-4 leading-tight">{product.nameAr}</h1>

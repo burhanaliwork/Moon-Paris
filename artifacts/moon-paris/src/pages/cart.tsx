@@ -67,7 +67,7 @@ export default function CartPage() {
           <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="max-w-md w-full text-center p-10 glass-panel rounded-3xl">
             <CheckCircle className="w-24 h-24 text-primary mx-auto mb-6" />
             <h1 className="text-3xl font-display font-bold mb-4">تم تأكيد الطلب!</h1>
-            <p className="text-muted-foreground mb-8 text-lg">شكراً لتسوقك من مون باريس. سنتواصل معك قريباً لتأكيد التوصيل.</p>
+            <p className="text-muted-foreground mb-8 text-lg">شكراً لتسوقك من Moon Paris. سنتواصل معك قريباً لتأكيد التوصيل.</p>
             <Link href="/"><LuxuryButton className="w-full">العودة للرئيسية</LuxuryButton></Link>
           </motion.div>
         </main>
