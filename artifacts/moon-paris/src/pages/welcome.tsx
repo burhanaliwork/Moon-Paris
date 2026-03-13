@@ -99,12 +99,7 @@ export default function WelcomePage() {
       {/* Auth Form Side */}
       <div className="flex-1 flex items-center justify-center p-6 md:p-12 relative">
         
-        {/* Mobile Header */}
-        <div className="absolute top-8 left-0 right-0 flex justify-center md:hidden">
-          <img src={`${import.meta.env.BASE_URL}images/logo-gold.png`} alt="Moon Paris" className="w-20 h-20" />
-        </div>
-
-        <div className="w-full max-w-md w-full glass-panel p-8 md:p-10 rounded-3xl relative z-10 mt-16 md:mt-0">
+        <div className="w-full max-w-md w-full glass-panel p-8 md:p-10 rounded-3xl relative z-10">
           
           <AnimatePresence mode="wait">
             
