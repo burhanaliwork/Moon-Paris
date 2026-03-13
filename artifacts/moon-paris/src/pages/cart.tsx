@@ -1,59 +1,47 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { useStore } from '@/store/use-store';
 import { useGetMe, useCreateOrder } from '@workspace/api-client-react';
-import { formatPrice, IRAQI_GOVERNORATES } from '@/lib/utils';
-import { LuxuryButton, LuxuryInput, LuxurySelect } from '@/components/ui/luxury-components';
-import { Link, useLocation } from 'wouter';
-import { Trash2, Plus, Minus, ShoppingBag, ArrowRight, CheckCircle } from 'lucide-react';
+import { formatPrice } from '@/lib/utils';
+import { LuxuryButton } from '@/components/ui/luxury-components';
+import { Link } from 'wouter';
+import { Trash2, Plus, Minus, ShoppingBag, ArrowRight, CheckCircle, User, Phone, MapPin } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { motion } from 'framer-motion';
 
 export default function CartPage() {
   const { cart, removeFromCart, updateQuantity, cartTotal, clearCart } = useStore();
-  const { data: user, isLoading: isAuthLoading } = useGetMe({ query: { retry: false } });
+  const { data: user } = useGetMe({ query: { retry: false } });
   const createOrderMutation = useCreateOrder();
-  const [, setLocation] = useLocation();
 
-  const [checkoutData, setCheckoutData] = useState({
-    guestName: '', guestPhone: '', guestGovernorate: '', guestDistrict: '', notes: ''
-  });
-
+  const [notes, setNotes] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
-
-  useEffect(() => {
-    // Pre-fill if logged in
-    if (user && !isAuthLoading) {
-      setCheckoutData(prev => ({
-        ...prev,
-        guestName: user.fullName || '',
-        guestPhone: user.phone || '',
-        guestGovernorate: user.governorate || '',
-        guestDistrict: user.district || ''
-      }));
-    }
-  }, [user, isAuthLoading]);
 
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
     if (cart.length === 0) return;
+
+    if (!user?.fullName || !user?.phone || !user?.governorate || !user?.district) {
+      toast({ title: "معلومات ناقصة", description: "يرجى إكمال بيانات حسابك (الاسم، الهاتف، المحافظة، المنطقة) من صفحة الإعدادات", variant: "destructive" });
+      return;
+    }
 
     try {
       const items = cart.map(item => ({ productId: item.id, quantity: item.cartQuantity }));
       await createOrderMutation.mutateAsync({
         data: {
           items,
-          guestName: checkoutData.guestName,
-          guestPhone: checkoutData.guestPhone,
-          guestGovernorate: checkoutData.guestGovernorate,
-          guestDistrict: checkoutData.guestDistrict,
-          notes: checkoutData.notes
+          guestName: user.fullName,
+          guestPhone: user.phone,
+          guestGovernorate: user.governorate,
+          guestDistrict: user.district,
+          notes
         }
       });
       setIsSuccess(true);
       clearCart();
-      window.scrollTo(0,0);
+      window.scrollTo(0, 0);
     } catch (error: any) {
       toast({ title: "خطأ", description: error.message || "حدث خطأ أثناء إتمام الطلب", variant: "destructive" });
     }
@@ -150,24 +138,41 @@ export default function CartPage() {
                 </div>
 
                 <form onSubmit={handleCheckout} className="space-y-4">
-                  <div className="space-y-3">
-                    <h4 className="font-bold text-sm text-primary mb-2">معلومات التوصيل</h4>
-                    <LuxuryInput required placeholder="الاسم الكامل" value={checkoutData.guestName} onChange={e => setCheckoutData({...checkoutData, guestName: e.target.value})} />
-                    <LuxuryInput required placeholder="رقم الهاتف" type="tel" dir="ltr" className="text-right" value={checkoutData.guestPhone} onChange={e => setCheckoutData({...checkoutData, guestPhone: e.target.value})} />
-                    <LuxurySelect required value={checkoutData.guestGovernorate} onChange={e => setCheckoutData({...checkoutData, guestGovernorate: e.target.value})}>
-                      <option value="" disabled>اختر المحافظة</option>
-                      {IRAQI_GOVERNORATES.map(g => <option key={g} value={g}>{g}</option>)}
-                    </LuxurySelect>
-                    <LuxuryInput required placeholder="المنطقة / أقرب نقطة دالة" value={checkoutData.guestDistrict} onChange={e => setCheckoutData({...checkoutData, guestDistrict: e.target.value})} />
-                    <textarea 
-                      placeholder="ملاحظات للطلب (اختياري)"
-                      className="w-full h-24 rounded-xl border border-border bg-background/50 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary resize-none"
-                      value={checkoutData.notes}
-                      onChange={e => setCheckoutData({...checkoutData, notes: e.target.value})}
-                    />
+                  {/* معلومات التوصيل من الحساب */}
+                  <div className="space-y-2">
+                    <h4 className="font-bold text-sm text-primary mb-3">معلومات التوصيل</h4>
+                    <div className="rounded-xl border border-border bg-background/40 p-4 space-y-3 text-sm">
+                      <div className="flex items-center gap-3">
+                        <User className="w-4 h-4 text-primary shrink-0" />
+                        <span>{user?.fullName || <span className="text-destructive">الاسم غير مكتمل</span>}</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <Phone className="w-4 h-4 text-primary shrink-0" />
+                        <span dir="ltr">{user?.phone || <span className="text-destructive">الهاتف غير مكتمل</span>}</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <MapPin className="w-4 h-4 text-primary shrink-0" />
+                        <span>
+                          {user?.governorate && user?.district
+                            ? `${user.governorate} - ${user.district}`
+                            : <span className="text-destructive">العنوان غير مكتمل</span>
+                          }
+                        </span>
+                      </div>
+                    </div>
+                    {(!user?.phone || !user?.governorate || !user?.district) && (
+                      <p className="text-xs text-destructive">يرجى إكمال بيانات حسابك من الإعدادات قبل الطلب</p>
+                    )}
                   </div>
-                  
-                  <LuxuryButton type="submit" className="w-full h-14 text-lg mt-6" isLoading={createOrderMutation.isPending}>
+
+                  <textarea
+                    placeholder="ملاحظات للطلب (اختياري)"
+                    className="w-full h-20 rounded-xl border border-border bg-background/50 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary resize-none"
+                    value={notes}
+                    onChange={e => setNotes(e.target.value)}
+                  />
+
+                  <LuxuryButton type="submit" className="w-full h-14 text-lg mt-2" isLoading={createOrderMutation.isPending}>
                     تأكيد الطلب <ArrowRight className="ms-2 w-5 h-5 rotate-180" />
                   </LuxuryButton>
                 </form>
