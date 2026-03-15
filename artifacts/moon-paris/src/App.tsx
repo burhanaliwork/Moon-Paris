@@ -20,13 +20,14 @@ import AdminPromotions from "@/pages/admin/promotions";
 
 const queryClient = new QueryClient();
 
-function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
+function ProtectedRoute({ component: Component, returnTo }: { component: React.ComponentType; returnTo?: string }) {
   const { data: user, isLoading } = useGetMe({ query: { retry: false } });
   const [, setLoc] = useLocation();
 
   React.useEffect(() => {
     if (!isLoading && !user) {
-      setLoc('/welcome');
+      const dest = returnTo ? `/welcome?returnTo=${encodeURIComponent(returnTo)}` : '/welcome';
+      setLoc(dest);
     }
   }, [isLoading, user]);
 
@@ -46,7 +47,7 @@ function Router() {
       <Route path="/products" component={Home} />
       <Route path="/product/:id" component={ProductPage} />
       {/* Cart requires login */}
-      <Route path="/cart" component={() => <ProtectedRoute component={CartPage} />} />
+      <Route path="/cart" component={() => <ProtectedRoute component={CartPage} returnTo="/cart" />} />
       
       {/* Admin Routes */}
       <Route path="/admin" component={AdminDashboard} />

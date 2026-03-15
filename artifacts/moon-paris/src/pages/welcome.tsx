@@ -16,7 +16,8 @@ function validateIraqiPhone(phone: string): boolean {
 }
 
 export default function WelcomePage() {
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
+  const returnTo = new URLSearchParams(location.split('?')[1] || '').get('returnTo') || '/';
   const [view, setView] = useState<ViewState>('options');
   
   const loginMutation = useLoginUser();
