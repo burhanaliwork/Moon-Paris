@@ -18,7 +18,7 @@ export default function ProductPage() {
     query: { enabled: !!productId } 
   });
   
-  const addToCart = useStore(state => state.addToCart);
+  const addProductToCart = useStore(state => state.addProductToCart);
   const [quantity, setQuantity] = useState(1);
   const [activeImage, setActiveImage] = useState<string>('');
 
@@ -30,7 +30,7 @@ export default function ProductPage() {
 
   const handleAddToCart = () => {
     if (product) {
-      addToCart(product, quantity);
+      addProductToCart(product, quantity);
       toast({ title: "تم الإضافة", description: `تم إضافة ${quantity} من ${product.nameAr} للسلة` });
     }
   };

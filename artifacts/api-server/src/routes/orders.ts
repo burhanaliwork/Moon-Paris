@@ -1,6 +1,6 @@
 import { Router, type IRouter } from "express";
 import { db } from "@workspace/db";
-import { ordersTable, orderItemsTable, productsTable, usersTable } from "@workspace/db/schema";
+import { ordersTable, orderItemsTable, productsTable, sampleProductsTable, usersTable } from "@workspace/db/schema";
 import { eq } from "drizzle-orm";
 
 const router: IRouter = Router();
@@ -54,6 +54,31 @@ router.post("/", async (req, res) => {
     const orderItemsData = [];
 
     for (const item of items) {
+      // Handle sample product items (with size)
+      if (item.sampleProductId) {
+        const sample = await db.query.sampleProductsTable.findFirst({
+          where: eq(sampleProductsTable.id, item.sampleProductId),
+        });
+        if (!sample) {
+          return res.status(400).json({ error: "product_not_found", message: `التقسيمة غير موجودة` });
+        }
+        let price = 0;
+        if (item.size === '3ml') price = sample.price3ml ? parseFloat(sample.price3ml) : 0;
+        else if (item.size === '5ml') price = sample.price5ml ? parseFloat(sample.price5ml) : 0;
+        else if (item.size === '10ml') price = sample.price10ml ? parseFloat(sample.price10ml) : 0;
+
+        totalAmount += price * item.quantity;
+        orderItemsData.push({
+          productId: sample.id,
+          productName: `${sample.name} - ${item.size}`,
+          productNameAr: `${sample.nameAr} - ${item.size}`,
+          quantity: item.quantity,
+          price: price.toString(),
+        });
+        continue;
+      }
+
+      // Regular product
       const product = await db.query.productsTable.findFirst({
         where: eq(productsTable.id, item.productId),
       });

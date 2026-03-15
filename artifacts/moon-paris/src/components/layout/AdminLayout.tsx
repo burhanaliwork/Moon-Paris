@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'wouter';
-import { LayoutDashboard, Package, ShoppingCart, Users, Settings, LogOut, Store, Tag } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingCart, Users, Settings, LogOut, Store, Tag, Layers } from 'lucide-react';
 import { useLogoutUser, useGetMe } from '@workspace/api-client-react';
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -16,7 +16,8 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
 
   const navItems = [
     { name: 'الرئيسية', path: '/admin', icon: LayoutDashboard },
-    { name: 'المنتجات', path: '/admin/products', icon: Package },
+    { name: 'العطور كاملة', path: '/admin/products', icon: Package },
+    { name: 'تقسيمات العطور', path: '/admin/samples', icon: Layers },
     { name: 'الطلبات', path: '/admin/orders', icon: ShoppingCart },
     { name: 'العروض والإعلانات', path: '/admin/promotions', icon: Tag },
     { name: 'المستخدمين', path: '/admin/users', icon: Users },
