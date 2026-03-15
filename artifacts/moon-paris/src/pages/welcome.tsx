@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { useLocation } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useStore } from '@/store/use-store';
 import { useLoginUser, useRegisterUser } from '@workspace/api-client-react';
 import { LuxuryButton, LuxuryInput, LuxurySelect } from '@/components/ui/luxury-components';
 import { IRAQI_GOVERNORATES } from '@/lib/utils';
-import { User, LogIn, Store, ArrowRight } from 'lucide-react';
+import { User, LogIn, ArrowRight } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 type ViewState = 'options' | 'register' | 'login';
@@ -18,7 +17,6 @@ function validateIraqiPhone(phone: string): boolean {
 
 export default function WelcomePage() {
   const [, setLocation] = useLocation();
-  const setGuestMode = useStore(state => state.setGuestMode);
   const [view, setView] = useState<ViewState>('options');
   
   const loginMutation = useLoginUser();
@@ -102,14 +100,6 @@ export default function WelcomePage() {
                   <span className="flex items-center gap-3"><User className="w-5 h-5" /> إنشاء حساب جديد</span>
                   <ArrowRight className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
                 </LuxuryButton>
-                <div className="relative my-2">
-                  <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-border"></div></div>
-                  <div className="relative flex justify-center text-xs"><span className="bg-card px-4 text-muted-foreground">أو</span></div>
-                </div>
-                <LuxuryButton variant="ghost" size="lg" className="w-full flex justify-between group border border-border/50" onClick={() => { setGuestMode(true); setLocation('/'); }}>
-                  <span className="flex items-center gap-3"><Store className="w-5 h-5" /> تصفح كضيف</span>
-                  <ArrowRight className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-                </LuxuryButton>
               </motion.div>
             )}
 
@@ -179,10 +169,6 @@ export default function WelcomePage() {
                 <form onSubmit={handleLogin} className="space-y-4">
                   {loginMethod === 'phone' ? (
                     <div className="space-y-1">
-                      <div className="flex items-center gap-1 mb-1">
-                        <span className="text-sm text-muted-foreground">رقم الهاتف</span>
-                        <span className="text-xs text-red-400 font-medium">(إجباري)</span>
-                      </div>
                       <LuxuryInput
                         placeholder="07XXXXXXXXX"
                         type="tel"

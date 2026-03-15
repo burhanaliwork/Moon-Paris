@@ -2,7 +2,6 @@ import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { useStore } from "@/store/use-store";
 import { useGetMe } from "@workspace/api-client-react";
 import React from 'react';
 
@@ -22,19 +21,17 @@ import AdminPromotions from "@/pages/admin/promotions";
 const queryClient = new QueryClient();
 
 function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
-  const { data: user, isLoading, isError } = useGetMe({ query: { retry: false } });
-  const isGuest = useStore(state => state.isGuest);
+  const { data: user, isLoading } = useGetMe({ query: { retry: false } });
   const [, setLoc] = useLocation();
 
   React.useEffect(() => {
-    if (!isLoading && (isError || !user) && !isGuest) {
+    if (!isLoading && !user) {
       setLoc('/welcome');
     }
-  }, [isLoading, isError, user, isGuest]);
+  }, [isLoading, user]);
 
   if (isLoading) return <div className="min-h-screen bg-background flex items-center justify-center"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>;
-  
-  if ((isError || !user) && !isGuest) return null;
+  if (!user) return null;
 
   return <Component />;
 }
@@ -44,10 +41,11 @@ function Router() {
     <Switch>
       <Route path="/welcome" component={WelcomePage} />
       
-      {/* Protected/Store Routes */}
-      <Route path="/" component={() => <ProtectedRoute component={Home} />} />
-      <Route path="/products" component={() => <ProtectedRoute component={Home} />} />
-      <Route path="/product/:id" component={() => <ProtectedRoute component={ProductPage} />} />
+      {/* Public Store Routes */}
+      <Route path="/" component={Home} />
+      <Route path="/products" component={Home} />
+      <Route path="/product/:id" component={ProductPage} />
+      {/* Cart requires login */}
       <Route path="/cart" component={() => <ProtectedRoute component={CartPage} />} />
       
       {/* Admin Routes */}
