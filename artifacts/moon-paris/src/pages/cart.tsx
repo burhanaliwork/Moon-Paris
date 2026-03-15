@@ -2,36 +2,48 @@ import React, { useState } from 'react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { useStore } from '@/store/use-store';
-import { useGetMe, useCreateOrder } from '@workspace/api-client-react';
-import { formatPrice } from '@/lib/utils';
-import { LuxuryButton } from '@/components/ui/luxury-components';
-import { Link, useLocation } from 'wouter';
+import { useCreateOrder } from '@workspace/api-client-react';
+import { formatPrice, IRAQI_GOVERNORATES } from '@/lib/utils';
+import { LuxuryButton, LuxuryInput, LuxurySelect } from '@/components/ui/luxury-components';
+import { Link } from 'wouter';
 import { Trash2, Plus, Minus, ShoppingBag, ArrowRight, CheckCircle, User, Phone, MapPin } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { motion } from 'framer-motion';
 
+const IRAQI_PHONE_REGEX = /^07[3-9]\d{8}$/;
+
 export default function CartPage() {
-  const { cart, removeFromCart, updateQuantity, cartTotal, clearCart, isGuest, setGuestMode } = useStore();
-  const { data: user } = useGetMe({ query: { retry: false } });
+  const { cart, removeFromCart, updateQuantity, cartTotal, clearCart } = useStore();
   const createOrderMutation = useCreateOrder();
-  const [, setLocation] = useLocation();
 
   const [notes, setNotes] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
+  const [showCheckoutForm, setShowCheckoutForm] = useState(false);
+
+  const [guestInfo, setGuestInfo] = useState({
+    fullName: '',
+    phone: '',
+    governorate: '',
+    district: '',
+  });
+  const [phoneError, setPhoneError] = useState('');
+
+  const handlePhoneChange = (val: string) => {
+    const cleaned = val.replace(/\D/g, '');
+    setGuestInfo({ ...guestInfo, phone: cleaned });
+    if (cleaned && !IRAQI_PHONE_REGEX.test(cleaned)) {
+      setPhoneError('رقم الهاتف يجب أن يكون عراقياً صحيحاً (07XXXXXXXXX)');
+    } else {
+      setPhoneError('');
+    }
+  };
 
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
     if (cart.length === 0) return;
 
-    if (isGuest && !user) {
-      toast({ title: "يجب إنشاء حساب", description: "لإتمام الطلب يجب تسجيل الدخول أو إنشاء حساب جديد", variant: "destructive" });
-      setGuestMode(false);
-      setLocation('/welcome');
-      return;
-    }
-
-    if (!user?.fullName || !user?.phone || !user?.governorate || !user?.district) {
-      toast({ title: "معلومات ناقصة", description: "يرجى إكمال بيانات حسابك (الاسم، الهاتف، المحافظة، المنطقة) من صفحة الإعدادات", variant: "destructive" });
+    if (!IRAQI_PHONE_REGEX.test(guestInfo.phone)) {
+      setPhoneError('يرجى إدخال رقم هاتف عراقي صحيح (07XXXXXXXXX)');
       return;
     }
 
@@ -40,10 +52,10 @@ export default function CartPage() {
       await createOrderMutation.mutateAsync({
         data: {
           items,
-          guestName: user.fullName,
-          guestPhone: user.phone,
-          guestGovernorate: user.governorate,
-          guestDistrict: user.district,
+          guestName: guestInfo.fullName,
+          guestPhone: guestInfo.phone,
+          guestGovernorate: guestInfo.governorate,
+          guestDistrict: guestInfo.district,
           notes
         }
       });
@@ -125,10 +137,10 @@ export default function CartPage() {
               ))}
             </div>
 
-            {/* Checkout Form */}
+            {/* Checkout Summary */}
             <div className="lg:col-span-1">
               <div className="glass-panel p-6 rounded-3xl sticky top-24">
-                <h3 className="text-xl font-bold mb-6 font-display border-b border-border pb-4">ملخص وتأكيد الطلب</h3>
+                <h3 className="text-xl font-bold mb-6 font-display border-b border-border pb-4">ملخص الطلب</h3>
                 
                 <div className="space-y-4 mb-6 text-sm">
                   <div className="flex justify-between">
@@ -145,45 +157,95 @@ export default function CartPage() {
                   </div>
                 </div>
 
-                <form onSubmit={handleCheckout} className="space-y-4">
-                  {/* معلومات التوصيل من الحساب */}
-                  <div className="space-y-2">
-                    <h4 className="font-bold text-sm text-primary mb-3">معلومات التوصيل</h4>
-                    <div className="rounded-xl border border-border bg-background/40 p-4 space-y-3 text-sm">
-                      <div className="flex items-center gap-3">
-                        <User className="w-4 h-4 text-primary shrink-0" />
-                        <span>{user?.fullName || <span className="text-destructive">الاسم غير مكتمل</span>}</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <Phone className="w-4 h-4 text-primary shrink-0" />
-                        <span dir="ltr">{user?.phone || <span className="text-destructive">الهاتف غير مكتمل</span>}</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <MapPin className="w-4 h-4 text-primary shrink-0" />
-                        <span>
-                          {user?.governorate && user?.district
-                            ? `${user.governorate} - ${user.district}`
-                            : <span className="text-destructive">العنوان غير مكتمل</span>
-                          }
-                        </span>
-                      </div>
-                    </div>
-                    {(!user?.phone || !user?.governorate || !user?.district) && (
-                      <p className="text-xs text-destructive">يرجى إكمال بيانات حسابك من الإعدادات قبل الطلب</p>
-                    )}
-                  </div>
-
-                  <textarea
-                    placeholder="ملاحظات للطلب (اختياري)"
-                    className="w-full h-20 rounded-xl border border-border bg-background/50 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary resize-none"
-                    value={notes}
-                    onChange={e => setNotes(e.target.value)}
-                  />
-
-                  <LuxuryButton type="submit" className="w-full h-14 text-lg mt-2" isLoading={createOrderMutation.isPending}>
-                    تأكيد الطلب <ArrowRight className="ms-2 w-5 h-5 rotate-180" />
+                {!showCheckoutForm ? (
+                  <LuxuryButton 
+                    className="w-full h-14 text-lg"
+                    onClick={() => setShowCheckoutForm(true)}
+                  >
+                    إتمام الطلب <ArrowRight className="ms-2 w-5 h-5 rotate-180" />
                   </LuxuryButton>
-                </form>
+                ) : (
+                  <motion.form
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    onSubmit={handleCheckout}
+                    className="space-y-4"
+                  >
+                    <h4 className="font-bold text-sm text-primary border-b border-border pb-3 flex items-center gap-2">
+                      <MapPin className="w-4 h-4" /> معلومات التوصيل
+                    </h4>
+
+                    <div className="space-y-1">
+                      <label className="text-xs text-muted-foreground flex items-center gap-1">
+                        <User className="w-3 h-3" /> الاسم الكامل
+                      </label>
+                      <LuxuryInput
+                        placeholder="أدخل اسمك الكامل"
+                        required
+                        value={guestInfo.fullName}
+                        onChange={e => setGuestInfo({ ...guestInfo, fullName: e.target.value })}
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-xs text-muted-foreground flex items-center gap-1">
+                        <Phone className="w-3 h-3" /> رقم الهاتف
+                      </label>
+                      <LuxuryInput
+                        placeholder="07XXXXXXXXX"
+                        type="tel"
+                        dir="ltr"
+                        required
+                        maxLength={11}
+                        value={guestInfo.phone}
+                        onChange={e => handlePhoneChange(e.target.value)}
+                        className={`text-left ${phoneError ? 'border-red-500' : ''}`}
+                      />
+                      {phoneError && <p className="text-xs text-red-400">{phoneError}</p>}
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-xs text-muted-foreground">المحافظة</label>
+                      <LuxurySelect
+                        required
+                        value={guestInfo.governorate}
+                        onChange={e => setGuestInfo({ ...guestInfo, governorate: e.target.value })}
+                      >
+                        <option value="" disabled>اختر المحافظة</option>
+                        {IRAQI_GOVERNORATES.map(gov => <option key={gov} value={gov}>{gov}</option>)}
+                      </LuxurySelect>
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-xs text-muted-foreground">المنطقة / الحي</label>
+                      <LuxuryInput
+                        placeholder="اسم المنطقة أو الحي"
+                        required
+                        value={guestInfo.district}
+                        onChange={e => setGuestInfo({ ...guestInfo, district: e.target.value })}
+                      />
+                    </div>
+
+                    <textarea
+                      placeholder="ملاحظات للطلب (اختياري)"
+                      className="w-full h-16 rounded-xl border border-border bg-background/50 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary resize-none"
+                      value={notes}
+                      onChange={e => setNotes(e.target.value)}
+                    />
+
+                    <LuxuryButton type="submit" className="w-full h-12 text-base mt-2" isLoading={createOrderMutation.isPending}>
+                      تأكيد الطلب <ArrowRight className="ms-2 w-4 h-4 rotate-180" />
+                    </LuxuryButton>
+
+                    <button
+                      type="button"
+                      onClick={() => setShowCheckoutForm(false)}
+                      className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors py-1"
+                    >
+                      رجوع
+                    </button>
+                  </motion.form>
+                )}
               </div>
             </div>
 

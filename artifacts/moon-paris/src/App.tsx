@@ -46,8 +46,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/products" component={Home} />
       <Route path="/product/:id" component={ProductPage} />
-      {/* Cart requires login */}
-      <Route path="/cart" component={() => <ProtectedRoute component={CartPage} returnTo="/cart" />} />
+      <Route path="/cart" component={CartPage} />
       
       {/* Admin Routes */}
       <Route path="/admin" component={AdminDashboard} />

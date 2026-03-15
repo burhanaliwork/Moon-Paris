@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'wouter';
-import { ShoppingBag, User, Menu, X, LogOut, ShieldCheck } from 'lucide-react';
+import { ShoppingBag, Menu, X, LogOut, ShieldCheck } from 'lucide-react';
 import { useStore } from '@/store/use-store';
 import { useGetMe, useLogoutUser } from '@workspace/api-client-react';
 import { LuxuryButton } from '../ui/luxury-components';
@@ -9,16 +9,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [location, setLocation] = useLocation();
+  const [, setLocation] = useLocation();
   const cart = useStore(state => state.cart);
   const { data: user } = useGetMe({ query: { retry: false } });
   const logoutMutation = useLogoutUser();
   const cartCount = cart.reduce((acc, item) => acc + item.cartQuantity, 0);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -26,7 +24,7 @@ export function Navbar() {
   const handleLogout = async () => {
     try {
       await logoutMutation.mutateAsync();
-      setLocation('/welcome');
+      setLocation('/');
     } catch (e) {
       console.error(e);
     }
@@ -54,8 +52,7 @@ export function Navbar() {
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
             <Link href="/" className="text-foreground hover:text-primary transition-colors">الرئيسية</Link>
-            <Link href="/products" className="text-foreground hover:text-primary transition-colors">عطورنا</Link>
-            <Link href="/about" className="text-foreground hover:text-primary transition-colors">من نحن</Link>
+            <Link href="/products" className="text-foreground hover:text-primary transition-colors">العطور كاملة</Link>
           </nav>
 
           {/* Actions */}
@@ -70,24 +67,22 @@ export function Navbar() {
             </Link>
 
             <div className="hidden md:flex items-center gap-3">
-              {user ? (
+              {user?.role === 'admin' ? (
                 <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground border-l border-border pl-3">
-                    <User className="w-4 h-4 text-primary" />
-                    <span>{user.fullName.split(' ')[0]}</span>
-                  </div>
-                  {user.role === 'admin' && (
-                    <Link href="/admin" className="text-primary hover:text-primary/80 transition-colors" title="لوحة التحكم">
-                      <ShieldCheck className="w-5 h-5" />
-                    </Link>
-                  )}
+                  <Link href="/admin" className="flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors border border-primary/30 rounded-lg px-3 py-1.5">
+                    <ShieldCheck className="w-4 h-4" />
+                    <span>لوحة التحكم</span>
+                  </Link>
                   <button onClick={handleLogout} className="text-muted-foreground hover:text-destructive transition-colors">
                     <LogOut className="w-5 h-5" />
                   </button>
                 </div>
               ) : (
                 <Link href="/welcome">
-                  <LuxuryButton variant="outline" size="sm">تسجيل الدخول</LuxuryButton>
+                  <LuxuryButton variant="outline" size="sm" className="flex items-center gap-2">
+                    <ShieldCheck className="w-4 h-4" />
+                    تسجيل الدخول
+                  </LuxuryButton>
                 </Link>
               )}
             </div>
@@ -113,19 +108,19 @@ export function Navbar() {
             className="absolute top-full left-0 w-full glass-panel border-t-0 p-6 flex flex-col gap-4 md:hidden shadow-2xl"
           >
             <Link href="/" className="text-lg text-foreground pb-2 border-b border-border" onClick={() => setMobileMenuOpen(false)}>الرئيسية</Link>
-            <Link href="/products" className="text-lg text-foreground pb-2 border-b border-border" onClick={() => setMobileMenuOpen(false)}>عطورنا</Link>
+            <Link href="/products" className="text-lg text-foreground pb-2 border-b border-border" onClick={() => setMobileMenuOpen(false)}>العطور كاملة</Link>
             
-            {user ? (
+            {user?.role === 'admin' ? (
               <>
-                <div className="py-2 text-primary font-bold">{user.fullName}</div>
-                {user.role === 'admin' && (
-                  <Link href="/admin" className="text-lg text-foreground pb-2 border-b border-border" onClick={() => setMobileMenuOpen(false)}>لوحة الإدارة</Link>
-                )}
+                <Link href="/admin" className="text-lg text-foreground pb-2 border-b border-border" onClick={() => setMobileMenuOpen(false)}>لوحة الإدارة</Link>
                 <button onClick={() => { handleLogout(); setMobileMenuOpen(false); }} className="text-lg text-destructive text-right pb-2">تسجيل الخروج</button>
               </>
             ) : (
               <Link href="/welcome" onClick={() => setMobileMenuOpen(false)}>
-                <LuxuryButton className="w-full mt-2">تسجيل الدخول</LuxuryButton>
+                <LuxuryButton className="w-full mt-2 flex items-center justify-center gap-2">
+                  <ShieldCheck className="w-4 h-4" />
+                  تسجيل الدخول
+                </LuxuryButton>
               </Link>
             )}
           </motion.div>

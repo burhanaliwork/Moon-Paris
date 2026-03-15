@@ -1,25 +1,31 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { useGetProducts, useGetSiteSettings } from '@workspace/api-client-react';
 import { Link } from 'wouter';
 import { LuxuryButton } from '@/components/ui/luxury-components';
 import { formatPrice } from '@/lib/utils';
-import { ShoppingBag, ArrowLeft } from 'lucide-react';
+import { ShoppingBag, ArrowLeft, Grid2X2, Layers } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useStore } from '@/store/use-store';
 import { toast } from '@/hooks/use-toast';
+
+const CATEGORIES = ['عطور رجالية', 'عطور نسائية', 'عطور للجنسين', 'عطور نيش'];
 
 export default function Home() {
   const { data: settings } = useGetSiteSettings();
   const { data: products = [], isLoading } = useGetProducts();
   const addToCart = useStore(state => state.addToCart);
 
-  const featuredProducts = products.filter(p => p.featured).slice(0, 4);
-  const latestProducts = products.slice(0, 8);
+  const [viewMode, setViewMode] = useState<'all' | 'categories'>('all');
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+
+  const filteredProducts = viewMode === 'categories' && selectedCategory
+    ? products.filter(p => p.category === selectedCategory)
+    : products;
 
   const handleAddToCart = (e: React.MouseEvent, product: any) => {
-    e.preventDefault(); // prevent navigation
+    e.preventDefault();
     addToCart(product, 1);
     toast({ title: "تم الإضافة بنجاح", description: `تم إضافة ${product.nameAr} إلى عربة التسوق` });
   };
@@ -57,43 +63,92 @@ export default function Home() {
               {settings?.heroSubtitle || "اكتشف مجموعتنا الحصرية من العطور الفاخرة التي تعكس شخصيتك الفريدة وتدوم طويلاً."}
             </p>
             <div className="flex flex-wrap gap-4">
-              <LuxuryButton size="lg" onClick={() => document.getElementById('featured')?.scrollIntoView({ behavior: 'smooth' })}>
+              <LuxuryButton size="lg" onClick={() => document.getElementById('products-section')?.scrollIntoView({ behavior: 'smooth' })}>
                 تسوق الآن
               </LuxuryButton>
-              <Link href="/products">
-                <LuxuryButton variant="outline" size="lg" className="bg-black/20 backdrop-blur-sm">
-                  عرض كل العطور
-                </LuxuryButton>
-              </Link>
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Featured Products */}
-      <section id="featured" className="py-24 bg-background">
+      {/* Products Section */}
+      <section id="products-section" className="py-24 bg-background">
         <div className="container px-4 md:px-8">
-          <div className="flex justify-between items-end mb-12">
+
+          {/* Filter Tabs */}
+          <div className="flex items-center gap-3 mb-10 flex-wrap">
+            <button
+              onClick={() => { setViewMode('all'); setSelectedCategory(null); }}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-200 border ${
+                viewMode === 'all'
+                  ? 'bg-primary text-black border-primary shadow-lg shadow-primary/30'
+                  : 'border-white/10 text-muted-foreground hover:border-primary/50 hover:text-primary bg-card'
+              }`}
+            >
+              <Grid2X2 className="w-4 h-4" />
+              العطور كاملة
+            </button>
+            <button
+              onClick={() => { setViewMode('categories'); setSelectedCategory(selectedCategory || CATEGORIES[0]); }}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-200 border ${
+                viewMode === 'categories'
+                  ? 'bg-primary text-black border-primary shadow-lg shadow-primary/30'
+                  : 'border-white/10 text-muted-foreground hover:border-primary/50 hover:text-primary bg-card'
+              }`}
+            >
+              <Layers className="w-4 h-4" />
+              تقسيمات العطور
+            </button>
+
+            {/* Category sub-buttons */}
+            {viewMode === 'categories' && (
+              <div className="flex flex-wrap gap-2">
+                {CATEGORIES.map(cat => (
+                  <button
+                    key={cat}
+                    onClick={() => setSelectedCategory(cat)}
+                    className={`px-4 py-2 rounded-full text-xs font-medium transition-all duration-200 border ${
+                      selectedCategory === cat
+                        ? 'bg-white/10 text-white border-white/30'
+                        : 'border-white/5 text-muted-foreground hover:text-foreground bg-card'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="flex justify-between items-end mb-8">
             <div>
-              <h2 className="text-3xl md:text-4xl font-display font-bold gold-gradient-text mb-2">عطور مميزة</h2>
-              <p className="text-muted-foreground">أكثر العطور مبيعاً وطلباً في متجرنا</p>
+              <h2 className="text-3xl md:text-4xl font-display font-bold gold-gradient-text mb-1">
+                {viewMode === 'categories' && selectedCategory ? selectedCategory : 'جميع العطور'}
+              </h2>
+              <p className="text-muted-foreground text-sm">
+                {filteredProducts.length} عطر متاح
+              </p>
             </div>
-            <Link href="/products" className="hidden md:flex items-center gap-2 text-primary hover:text-primary/80 transition-colors">
-              عرض الكل <ArrowLeft className="w-4 h-4" />
-            </Link>
           </div>
 
           {isLoading ? (
             <div className="grid grid-cols-2 gap-4">
-              {[1,2,3,4].map(i => (
+              {[1,2,3,4,5,6].map(i => (
                 <div key={i} className="animate-pulse bg-card rounded-2xl h-72 border border-white/5"></div>
               ))}
             </div>
+          ) : filteredProducts.length === 0 ? (
+            <div className="text-center py-20 text-muted-foreground">
+              <p className="text-lg">لا توجد عطور في هذا القسم</p>
+            </div>
           ) : (
-            <div className="grid grid-cols-2 gap-4">
-              {latestProducts.map((product) => (
+            <div className="grid grid-cols-2 gap-4 md:gap-6">
+              {filteredProducts.map((product, index) => (
                 <Link key={product.id} href={`/product/${product.id}`}>
                   <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
                     whileHover={{ y: -4 }}
                     className="group bg-card rounded-2xl overflow-hidden border border-white/5 hover:border-primary/50 transition-all duration-300 shadow-lg hover:shadow-primary/20"
                   >
@@ -104,19 +159,24 @@ export default function Home() {
                         className="w-full h-full object-contain drop-shadow-2xl group-hover:scale-110 transition-transform duration-700"
                         onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1594035910387-fea47794261f?w=400&h=500&fit=crop"; }}
                       />
+                      {product.originalPrice && product.originalPrice > product.price && (
+                        <div className="absolute top-2 right-2 bg-primary text-black text-[10px] font-bold px-2 py-0.5 rounded-full">
+                          خصم
+                        </div>
+                      )}
                     </div>
                     <div className="p-3 md:p-5">
                       <div className="text-xs text-primary mb-1 font-medium tracking-wider truncate">{product.brand || product.category}</div>
-                      <h3 className="text-sm md:text-lg font-bold text-foreground mb-2 truncate">{product.nameAr}</h3>
-                      <div className="flex items-center justify-between gap-1">
+                      <h3 className="text-sm md:text-base font-bold text-foreground mb-2 line-clamp-2 leading-snug">{product.nameAr}</h3>
+                      <div className="flex items-center justify-between gap-1 mb-3">
                         <span className="text-sm md:text-base font-bold gold-gradient-text">{formatPrice(product.price)}</span>
-                        {product.originalPrice && (
+                        {product.originalPrice && product.originalPrice > product.price && (
                           <span className="text-xs text-muted-foreground line-through">{formatPrice(product.originalPrice)}</span>
                         )}
                       </div>
                       <button
                         onClick={(e) => handleAddToCart(e, product)}
-                        className="mt-3 w-full flex items-center justify-center gap-2 py-2 rounded-xl bg-primary/10 hover:bg-primary hover:text-black text-primary text-xs font-bold transition-all duration-200"
+                        className="w-full flex items-center justify-center gap-2 py-2 rounded-xl bg-primary/10 hover:bg-primary hover:text-black text-primary text-xs font-bold transition-all duration-200"
                       >
                         <ShoppingBag className="w-3.5 h-3.5" /> أضف للسلة
                       </button>
