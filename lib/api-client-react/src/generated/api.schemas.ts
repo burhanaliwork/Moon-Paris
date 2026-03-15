@@ -182,6 +182,11 @@ export interface SiteSettings {
   contactPhone?: string | null;
   contactEmail?: string | null;
   aboutText?: string | null;
+  infoSectionTitle?: string | null;
+  stat1Value?: string | null;
+  stat1Label?: string | null;
+  stat2Value?: string | null;
+  stat2Label?: string | null;
 }
 
 export type GetProductsParams = {

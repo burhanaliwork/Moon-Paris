@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'wouter';
-import { Instagram, Facebook, Phone, MapPin } from 'lucide-react';
+import { Instagram, Phone, MapPin } from 'lucide-react';
 
 export function Footer() {
   return (
@@ -17,8 +17,7 @@ export function Footer() {
               نقدم لكم أرقى العطور المستوحاة من سحر باريس، مصممة خصيصاً لتناسب الذوق العراقي الرفيع.
             </p>
             <div className="flex gap-4">
-              <a href="#" className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-primary hover:bg-primary hover:text-black transition-all"><Instagram size={18} /></a>
-              <a href="#" className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-primary hover:bg-primary hover:text-black transition-all"><Facebook size={18} /></a>
+              <a href="https://www.instagram.com/moonparis.iq" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-primary hover:bg-primary hover:text-black transition-all"><Instagram size={18} /></a>
             </div>
           </div>
 

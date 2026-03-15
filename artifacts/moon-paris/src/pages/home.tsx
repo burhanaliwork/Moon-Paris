@@ -136,19 +136,19 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
               <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground mb-6 leading-tight">
-                الجودة الأصيلة، <br/><span className="gold-gradient-text">مباشرة من باريس</span>
+                {settings?.infoSectionTitle || "الجودة الأصيلة، مباشرة من باريس"}
               </h2>
               <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
                 {settings?.aboutText || "نحرص في Moon Paris على اختيار أجود أنواع العطور التي تعكس الفخامة والرقي. كل قطرة تحكي قصة، وكل زجاجة هي تحفة فنية مصممة لتدوم طويلاً وتترك أثراً لا ينسى في كل مكان تذهب إليه."}
               </p>
               <div className="grid grid-cols-2 gap-6">
                 <div>
-                  <h4 className="text-xl font-bold text-primary mb-2">100%</h4>
-                  <p className="text-sm text-muted-foreground">عطور أصلية</p>
+                  <h4 className="text-xl font-bold text-primary mb-2">{settings?.stat1Value || "عطور أصلية"}</h4>
+                  <p className="text-sm text-muted-foreground">{settings?.stat1Label || "100%"}</p>
                 </div>
                 <div>
-                  <h4 className="text-xl font-bold text-primary mb-2">توصيل سريع</h4>
-                  <p className="text-sm text-muted-foreground">لكافة محافظات العراق</p>
+                  <h4 className="text-xl font-bold text-primary mb-2">{settings?.stat2Value || "توصيل سريع"}</h4>
+                  <p className="text-sm text-muted-foreground">{settings?.stat2Label || "لكافة محافظات العراق"}</p>
                 </div>
               </div>
             </div>

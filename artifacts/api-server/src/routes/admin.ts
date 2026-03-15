@@ -97,6 +97,11 @@ router.get("/site-settings", async (req, res) => {
       contactPhone: settings.contactPhone,
       contactEmail: settings.contactEmail,
       aboutText: settings.aboutText,
+      infoSectionTitle: settings.infoSectionTitle,
+      stat1Value: settings.stat1Value,
+      stat1Label: settings.stat1Label,
+      stat2Value: settings.stat2Value,
+      stat2Label: settings.stat2Label,
     });
   } catch (err) {
     console.error(err);
@@ -109,17 +114,17 @@ router.put("/site-settings", async (req, res) => {
   try {
     if (!await requireAdmin(req, res)) return;
 
-    const { siteName, heroTitle, heroSubtitle, heroImageUrl, contactPhone, contactEmail, aboutText } = req.body;
+    const { siteName, heroTitle, heroSubtitle, heroImageUrl, contactPhone, contactEmail, aboutText, infoSectionTitle, stat1Value, stat1Label, stat2Value, stat2Label } = req.body;
 
     let settings = await db.query.siteSettingsTable.findFirst();
     if (!settings) {
       const [created] = await db.insert(siteSettingsTable).values({
-        siteName, heroTitle, heroSubtitle, heroImageUrl, contactPhone, contactEmail, aboutText
+        siteName, heroTitle, heroSubtitle, heroImageUrl, contactPhone, contactEmail, aboutText, infoSectionTitle, stat1Value, stat1Label, stat2Value, stat2Label
       }).returning();
       settings = created;
     } else {
       const [updated] = await db.update(siteSettingsTable)
-        .set({ siteName, heroTitle, heroSubtitle, heroImageUrl, contactPhone, contactEmail, aboutText })
+        .set({ siteName, heroTitle, heroSubtitle, heroImageUrl, contactPhone, contactEmail, aboutText, infoSectionTitle, stat1Value, stat1Label, stat2Value, stat2Label })
         .where(eq(siteSettingsTable.id, settings.id))
         .returning();
       settings = updated;
@@ -133,6 +138,11 @@ router.put("/site-settings", async (req, res) => {
       contactPhone: settings!.contactPhone,
       contactEmail: settings!.contactEmail,
       aboutText: settings!.aboutText,
+      infoSectionTitle: settings!.infoSectionTitle,
+      stat1Value: settings!.stat1Value,
+      stat1Label: settings!.stat1Label,
+      stat2Value: settings!.stat2Value,
+      stat2Label: settings!.stat2Label,
     });
   } catch (err) {
     console.error(err);

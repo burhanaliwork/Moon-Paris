@@ -12,7 +12,8 @@ export default function AdminSettings() {
 
   const [formData, setFormData] = useState({
     siteName: '', heroTitle: '', heroSubtitle: '', heroImageUrl: '',
-    contactPhone: '', contactEmail: '', aboutText: ''
+    contactPhone: '', contactEmail: '', aboutText: '',
+    infoSectionTitle: '', stat1Value: '', stat1Label: '', stat2Value: '', stat2Label: ''
   });
 
   useEffect(() => {
@@ -24,7 +25,12 @@ export default function AdminSettings() {
         heroImageUrl: settings.heroImageUrl || '',
         contactPhone: settings.contactPhone || '',
         contactEmail: settings.contactEmail || '',
-        aboutText: settings.aboutText || ''
+        aboutText: settings.aboutText || '',
+        infoSectionTitle: settings.infoSectionTitle || '',
+        stat1Value: settings.stat1Value || '',
+        stat1Label: settings.stat1Label || '',
+        stat2Value: settings.stat2Value || '',
+        stat2Label: settings.stat2Label || '',
       });
     }
   }, [settings]);
@@ -71,6 +77,34 @@ export default function AdminSettings() {
           <div>
             <label className="text-sm text-muted-foreground mb-2 block">رابط صورة الخلفية (URL)</label>
             <LuxuryInput value={formData.heroImageUrl} onChange={e => setFormData({...formData, heroImageUrl: e.target.value})} dir="ltr" />
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <h3 className="text-xl font-bold font-display text-primary border-b border-white/5 pb-2">قسم المعلومات (أسفل المنتجات)</h3>
+          <div>
+            <label className="text-sm text-muted-foreground mb-2 block">عنوان القسم</label>
+            <LuxuryInput value={formData.infoSectionTitle} onChange={e => setFormData({...formData, infoSectionTitle: e.target.value})} placeholder="الجودة الأصيلة، مباشرة من باريس" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="text-sm text-muted-foreground mb-2 block">الإحصاء 1 - العنوان</label>
+              <LuxuryInput value={formData.stat1Value} onChange={e => setFormData({...formData, stat1Value: e.target.value})} placeholder="عطور أصلية" />
+            </div>
+            <div>
+              <label className="text-sm text-muted-foreground mb-2 block">الإحصاء 1 - النص الفرعي</label>
+              <LuxuryInput value={formData.stat1Label} onChange={e => setFormData({...formData, stat1Label: e.target.value})} placeholder="100%" />
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="text-sm text-muted-foreground mb-2 block">الإحصاء 2 - العنوان</label>
+              <LuxuryInput value={formData.stat2Value} onChange={e => setFormData({...formData, stat2Value: e.target.value})} placeholder="توصيل سريع" />
+            </div>
+            <div>
+              <label className="text-sm text-muted-foreground mb-2 block">الإحصاء 2 - النص الفرعي</label>
+              <LuxuryInput value={formData.stat2Label} onChange={e => setFormData({...formData, stat2Label: e.target.value})} placeholder="لكافة محافظات العراق" />
+            </div>
           </div>
         </div>
 
