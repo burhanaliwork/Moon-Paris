@@ -99,46 +99,54 @@ router.post("/verify-otp", async (req, res) => {
 // Register
 router.post("/register", async (req, res) => {
   try {
-    const { fullName, phone, email, password, governorate, district, otpCode } = req.body;
+    const { fullName, phone, email, password, governorate, district, otpCode, regMethod } = req.body;
 
-    if (!fullName || !phone || !governorate || !district || !otpCode) {
-      return res.status(400).json({ error: "missing_fields", message: "جميع الحقول المطلوبة يجب ملؤها" });
+    if (!fullName) {
+      return res.status(400).json({ error: "missing_fields", message: "الاسم الكامل مطلوب" });
     }
 
-    // Verify OTP was verified
+    const useEmailMethod = regMethod === 'email';
+
+    if (useEmailMethod) {
+      // Email + password registration
+      if (!email || !password) {
+        return res.status(400).json({ error: "missing_fields", message: "البريد الإلكتروني وكلمة المرور مطلوبان" });
+      }
+      const existingEmail = await db.query.usersTable.findFirst({ where: eq(usersTable.email, email) });
+      if (existingEmail) {
+        return res.status(400).json({ error: "email_exists", message: "البريد الإلكتروني مسجل مسبقاً" });
+      }
+      const passwordHash = await bcrypt.hash(password, 10);
+      const [user] = await db.insert(usersTable).values({
+        fullName, email, passwordHash, phone: null, governorate: governorate || null, district: district || null, role: "user",
+      }).returning();
+      (req.session as any).userId = user.id;
+      return res.status(201).json({
+        user: { id: user.id, fullName: user.fullName, phone: user.phone, email: user.email, governorate: user.governorate, district: user.district, role: user.role, createdAt: user.createdAt.toISOString() },
+        message: "تم إنشاء الحساب بنجاح",
+      });
+    }
+
+    // Phone + OTP registration
+    if (!phone || !governorate || !district || !otpCode) {
+      return res.status(400).json({ error: "missing_fields", message: "رقم الهاتف والمنطقة ورمز التحقق مطلوبة" });
+    }
+
     const otp = await db.query.otpTable.findFirst({
-      where: and(
-        eq(otpTable.phone, phone),
-        eq(otpTable.code, otpCode),
-        eq(otpTable.verified, true)
-      ),
+      where: and(eq(otpTable.phone, phone), eq(otpTable.code, otpCode), eq(otpTable.verified, true)),
     });
 
     if (!otp) {
       return res.status(400).json({ error: "otp_not_verified", message: "يجب التحقق من رقم الهاتف أولاً" });
     }
 
-    // Check if user exists
-    const existingUser = await db.query.usersTable.findFirst({
-      where: eq(usersTable.phone, phone),
-    });
+    const existingUser = await db.query.usersTable.findFirst({ where: eq(usersTable.phone, phone) });
     if (existingUser) {
       return res.status(400).json({ error: "phone_exists", message: "رقم الهاتف مسجل مسبقاً" });
     }
 
-    if (email) {
-      const existingEmail = await db.query.usersTable.findFirst({
-        where: eq(usersTable.email, email),
-      });
-      if (existingEmail) {
-        return res.status(400).json({ error: "email_exists", message: "البريد الإلكتروني مسجل مسبقاً" });
-      }
-    }
-
     let passwordHash: string | undefined = undefined;
-    if (password) {
-      passwordHash = await bcrypt.hash(password, 10);
-    }
+    if (password) passwordHash = await bcrypt.hash(password, 10);
 
     const [user] = await db.insert(usersTable).values({
       fullName,

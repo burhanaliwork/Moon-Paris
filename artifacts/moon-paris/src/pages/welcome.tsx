@@ -21,6 +21,7 @@ export default function WelcomePage() {
   const verifyOtpMutation = useVerifyOtp();
 
   // Registration State
+  const [regMethod, setRegMethod] = useState<'phone' | 'email'>('phone');
   const [regData, setRegData] = useState({
     fullName: '', phone: '', email: '', password: '', governorate: '', district: '', otpCode: ''
   });
@@ -55,10 +56,10 @@ export default function WelcomePage() {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!otpVerified) return toast({ title: "تنبيه", description: "يجب التحقق من رقم الهاتف أولاً", variant: "destructive" });
+    if (regMethod === 'phone' && !otpVerified) return toast({ title: "تنبيه", description: "يجب التحقق من رقم الهاتف أولاً", variant: "destructive" });
     
     try {
-      await registerMutation.mutateAsync({ data: regData });
+      await registerMutation.mutateAsync({ data: { ...regData, regMethod } as any });
       toast({ title: "أهلاً بك", description: "تم إنشاء حسابك بنجاح" });
       setLocation('/');
     } catch (e: any) {
@@ -148,67 +149,49 @@ export default function WelcomePage() {
                 <button onClick={() => setView('options')} className="text-muted-foreground hover:text-primary mb-6 flex items-center gap-2 text-sm transition-colors">
                   <ArrowRight className="w-4 h-4 rotate-180" /> رجوع
                 </button>
-                <h2 className="text-2xl font-bold text-foreground mb-6 font-display">إنشاء حساب جديد</h2>
+                <h2 className="text-2xl font-bold text-foreground mb-4 font-display">إنشاء حساب جديد</h2>
+
+                <div className="flex bg-secondary/50 p-1 rounded-xl mb-5">
+                  <button onClick={() => { setRegMethod('phone'); setOtpSent(false); setOtpVerified(false); }} className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all ${regMethod === 'phone' ? 'bg-primary text-black shadow-md' : 'text-muted-foreground'}`}>رقم الهاتف</button>
+                  <button onClick={() => setRegMethod('email')} className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all ${regMethod === 'email' ? 'bg-primary text-black shadow-md' : 'text-muted-foreground'}`}>البريد الإلكتروني</button>
+                </div>
                 
                 <form onSubmit={handleRegister} className="space-y-4">
                   <LuxuryInput placeholder="الاسم الكامل" required value={regData.fullName} onChange={e => setRegData({...regData, fullName: e.target.value})} />
-                  
-                  <div className="space-y-2">
-                    <div className="flex gap-2">
-                      <LuxuryInput 
-                        placeholder="رقم الهاتف" 
-                        type="tel" 
-                        dir="auto" 
-                        required 
-                        disabled={otpVerified}
-                        value={regData.phone} 
-                        onChange={e => setRegData({...regData, phone: e.target.value})} 
-                        className="text-right"
-                      />
-                      {!otpVerified && (
-                        <LuxuryButton type="button" variant="secondary" onClick={handleSendOtpRegister} isLoading={sendOtpMutation.isPending} className="shrink-0 text-xs">
-                          إرسال كود للواتساب
-                        </LuxuryButton>
-                      )}
-                    </div>
-                    {otpSent && !otpVerified && (
-                      <div className="flex gap-2 animate-in slide-in-from-top-2">
-                        <LuxuryInput placeholder="كود التحقق" required value={regData.otpCode} onChange={e => setRegData({...regData, otpCode: e.target.value})} />
-                        <LuxuryButton type="button" variant="primary" onClick={handleVerifyOtpRegister} isLoading={verifyOtpMutation.isPending} className="shrink-0">
-                          تحقق
-                        </LuxuryButton>
+
+                  {regMethod === 'phone' ? (
+                    <>
+                      <div className="space-y-2">
+                        <div className="flex gap-2">
+                          <LuxuryInput placeholder="رقم الهاتف" type="tel" dir="auto" required disabled={otpVerified} value={regData.phone} onChange={e => setRegData({...regData, phone: e.target.value})} className="text-right" />
+                          {!otpVerified && (
+                            <LuxuryButton type="button" variant="secondary" onClick={handleSendOtpRegister} isLoading={sendOtpMutation.isPending} className="shrink-0 text-xs">
+                              كود واتساب
+                            </LuxuryButton>
+                          )}
+                        </div>
+                        {otpSent && !otpVerified && (
+                          <div className="flex gap-2 animate-in slide-in-from-top-2">
+                            <LuxuryInput placeholder="كود التحقق" required value={regData.otpCode} onChange={e => setRegData({...regData, otpCode: e.target.value})} />
+                            <LuxuryButton type="button" variant="primary" onClick={handleVerifyOtpRegister} isLoading={verifyOtpMutation.isPending} className="shrink-0">تحقق</LuxuryButton>
+                          </div>
+                        )}
+                        {otpVerified && <div className="text-xs text-green-500 flex items-center gap-1"><CheckCircle2 className="w-3 h-3"/> تم التحقق من الرقم</div>}
                       </div>
-                    )}
-                    {otpVerified && <div className="text-xs text-green-500 flex items-center gap-1"><CheckCircle2 className="w-3 h-3"/> تم التحقق من الرقم</div>}
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <LuxurySelect required value={regData.governorate} onChange={e => setRegData({...regData, governorate: e.target.value})}>
-                      <option value="" disabled>المحافظة</option>
-                      {IRAQI_GOVERNORATES.map(gov => <option key={gov} value={gov}>{gov}</option>)}
-                    </LuxurySelect>
-                    <LuxuryInput placeholder="المنطقة" required value={regData.district} onChange={e => setRegData({...regData, district: e.target.value})} />
-                  </div>
-
-                  <div className="p-4 rounded-xl bg-secondary/30 border border-primary/20">
-                    <p className="text-xs text-muted-foreground mb-3 text-center">أدخل البريد الإلكتروني وكلمة المرور لتأمين حسابك</p>
-                    <div className="space-y-3">
-                      <LuxuryInput 
-                        placeholder="البريد الإلكتروني (اختياري)" 
-                        type="email" 
-                        dir="ltr"
-                        value={regData.email} 
-                        onChange={e => setRegData({...regData, email: e.target.value})} 
-                      />
-                      <LuxuryInput 
-                        placeholder="كلمة المرور (اختياري)" 
-                        type="password" 
-                        dir="ltr"
-                        value={regData.password} 
-                        onChange={e => setRegData({...regData, password: e.target.value})} 
-                      />
-                    </div>
-                  </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <LuxurySelect required value={regData.governorate} onChange={e => setRegData({...regData, governorate: e.target.value})}>
+                          <option value="" disabled>المحافظة</option>
+                          {IRAQI_GOVERNORATES.map(gov => <option key={gov} value={gov}>{gov}</option>)}
+                        </LuxurySelect>
+                        <LuxuryInput placeholder="المنطقة" required value={regData.district} onChange={e => setRegData({...regData, district: e.target.value})} />
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <LuxuryInput placeholder="البريد الإلكتروني" type="email" dir="ltr" required value={regData.email} onChange={e => setRegData({...regData, email: e.target.value})} />
+                      <LuxuryInput placeholder="كلمة المرور" type="password" dir="ltr" required value={regData.password} onChange={e => setRegData({...regData, password: e.target.value})} />
+                    </>
+                  )}
 
                   <LuxuryButton type="submit" variant="primary" className="w-full mt-6" isLoading={registerMutation.isPending}>
                     تسجيل الحساب
