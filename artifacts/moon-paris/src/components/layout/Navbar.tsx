@@ -81,7 +81,7 @@ export function Navbar() {
                 <Link href="/welcome">
                   <LuxuryButton variant="outline" size="sm" className="flex items-center gap-2">
                     <ShieldCheck className="w-4 h-4" />
-                    تسجيل الدخول
+                    تسجيل الدخول (الإدارة)
                   </LuxuryButton>
                 </Link>
               )}
@@ -119,7 +119,7 @@ export function Navbar() {
               <Link href="/welcome" onClick={() => setMobileMenuOpen(false)}>
                 <LuxuryButton className="w-full mt-2 flex items-center justify-center gap-2">
                   <ShieldCheck className="w-4 h-4" />
-                  تسجيل الدخول
+                  تسجيل الدخول (الإدارة)
                 </LuxuryButton>
               </Link>
             )}
