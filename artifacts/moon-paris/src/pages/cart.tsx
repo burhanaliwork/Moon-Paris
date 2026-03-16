@@ -183,10 +183,13 @@ export default function CartPage() {
                       </LuxurySelect>
                     </div>
                     <div className="space-y-1">
-                      <label className="text-xs text-muted-foreground">المنطقة / الحي</label>
-                      <LuxuryInput placeholder="اسم المنطقة أو الحي" required value={guestInfo.district} onChange={e => setGuestInfo({ ...guestInfo, district: e.target.value })} />
+                      <label className="text-xs text-muted-foreground">المدينة أو القضاء</label>
+                      <LuxuryInput placeholder="اكتب اسم المدينة أو القضاء" required value={guestInfo.district} onChange={e => setGuestInfo({ ...guestInfo, district: e.target.value })} />
                     </div>
-                    <textarea placeholder="ملاحظات للطلب (اختياري)" className="w-full h-16 rounded-xl border border-border bg-background/50 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary resize-none" value={notes} onChange={e => setNotes(e.target.value)} />
+                    <div className="space-y-1">
+                      <label className="text-xs text-muted-foreground">ملاحظة خاصة بتسليم الطلب</label>
+                      <textarea placeholder="مثال: التوصيل بعد الساعة 5 مساءً، أو أي تفاصيل مساعدة للتوصيل..." className="w-full h-20 rounded-xl border border-border bg-background/50 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary resize-none" value={notes} onChange={e => setNotes(e.target.value)} />
+                    </div>
                     <LuxuryButton type="submit" className="w-full h-12 text-base" isLoading={createOrderMutation.isPending}>
                       تأكيد الطلب <ArrowRight className="ms-2 w-4 h-4 rotate-180" />
                     </LuxuryButton>
