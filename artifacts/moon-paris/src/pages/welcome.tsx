@@ -16,7 +16,8 @@ export default function WelcomePage() {
     e.preventDefault();
     try {
       const result = await loginMutation.mutateAsync({ data: loginData });
-      if ((result as any)?.role !== 'admin') {
+      const role = (result as any)?.user?.role ?? (result as any)?.role;
+      if (role !== 'admin') {
         toast({ title: "غير مصرح", description: "هذه الصفحة للإدارة فقط", variant: "destructive" });
         return;
       }
