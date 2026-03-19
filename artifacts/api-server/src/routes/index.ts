@@ -6,6 +6,7 @@ import samplesRouter from "./samples";
 import ordersRouter from "./orders";
 import adminRouter from "./admin";
 import promotionsRouter from "./promotions";
+import brandsRouter from "./brands";
 
 const router: IRouter = Router();
 
@@ -16,6 +17,7 @@ router.use("/samples", samplesRouter);
 router.use("/orders", ordersRouter);
 router.use("/admin", adminRouter);
 router.use("/promotions", promotionsRouter);
+router.use("/brands", brandsRouter);
 
 // Site settings
 router.get("/site-settings", async (req: any, res: any) => {
