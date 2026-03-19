@@ -2,10 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { AdminLayout } from '@/components/layout/AdminLayout';
 import { useGetProducts, useCreateProduct, useUpdateProduct, useDeleteProduct, type Product } from '@workspace/api-client-react';
 import { LuxuryButton, LuxuryInput, LuxurySelect } from '@/components/ui/luxury-components';
+
 import { formatPrice } from '@/lib/utils';
 import { Plus, Edit, Trash2, X, Image as ImageIcon, CheckCircle, AlertCircle, Loader } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { useQueryClient } from '@tanstack/react-query';
+
+const BASE_URL = import.meta.env.BASE_URL?.replace(/\/$/, '') || '';
+interface Brand { id: number; name: string; }
 
 type ImageStatus = 'idle' | 'loading' | 'valid' | 'invalid';
 
@@ -60,7 +64,13 @@ export default function AdminProducts() {
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
-  
+  const [brands, setBrands] = useState<Brand[]>([]);
+
+  useEffect(() => {
+    fetch(`${BASE_URL}/api/brands`, { credentials: 'include' })
+      .then(r => r.json()).then(d => setBrands(Array.isArray(d) ? d : [])).catch(() => {});
+  }, []);
+
   const [formData, setFormData] = useState({
     name: '', nameAr: '', description: '', descriptionAr: '', price: 0, originalPrice: 0,
     imageUrl: '', category: 'عطور رجالية', brand: '', volume: '100 مل',
@@ -213,8 +223,12 @@ export default function AdminProducts() {
                   </LuxurySelect>
                 </div>
                 <div>
-                  <label className="text-sm text-muted-foreground mb-2 block">الماركة / البراند</label>
-                  <LuxuryInput value={formData.brand} onChange={e => setFormData({...formData, brand: e.target.value})} />
+                  <label className="text-sm text-muted-foreground mb-2 block">اسم الشركة</label>
+                  <LuxurySelect value={formData.brand} onChange={e => setFormData({...formData, brand: e.target.value})}>
+                    <option value="">-- اختر الشركة --</option>
+                    {brands.map(b => <option key={b.id} value={b.name}>{b.name}</option>)}
+                  </LuxurySelect>
+                  {brands.length === 0 && <p className="text-xs text-amber-400 mt-1">لا توجد شركات — أضف من قسم الشركات أولاً</p>}
                 </div>
                 <div>
                   <label className="text-sm text-muted-foreground mb-2 block">الكمية في المخزون *</label>

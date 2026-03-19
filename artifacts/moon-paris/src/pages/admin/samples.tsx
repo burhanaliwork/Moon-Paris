@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { AdminLayout } from '@/components/layout/AdminLayout';
-import { LuxuryButton, LuxuryInput } from '@/components/ui/luxury-components';
+import { LuxuryButton, LuxuryInput, LuxurySelect } from '@/components/ui/luxury-components';
+
 import { Plus, Edit, Trash2, X, Image as ImageIcon, CheckCircle, AlertCircle, Loader } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { formatPrice } from '@/lib/utils';
+
+interface Brand { id: number; name: string; }
 
 type ImageStatus = 'idle' | 'loading' | 'valid' | 'invalid';
 
@@ -76,6 +79,12 @@ export default function AdminSamples() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [formData, setFormData] = useState(emptyForm);
+  const [brands, setBrands] = useState<Brand[]>([]);
+
+  useEffect(() => {
+    fetch(`${BASE_URL}/api/brands`, { credentials: 'include' })
+      .then(r => r.json()).then(d => setBrands(Array.isArray(d) ? d : [])).catch(() => {});
+  }, []);
 
   const loadSamples = async () => {
     try {
@@ -227,8 +236,12 @@ export default function AdminSamples() {
                   <LuxuryInput required value={f.name} onChange={e => set('name', e.target.value)} dir="ltr" />
                 </div>
                 <div>
-                  <label className="text-sm text-muted-foreground mb-2 block">الماركة / البراند</label>
-                  <LuxuryInput value={f.brand} onChange={e => set('brand', e.target.value)} />
+                  <label className="text-sm text-muted-foreground mb-2 block">اسم الشركة</label>
+                  <LuxurySelect value={f.brand} onChange={e => set('brand', e.target.value)}>
+                    <option value="">-- اختر الشركة --</option>
+                    {brands.map(b => <option key={b.id} value={b.name}>{b.name}</option>)}
+                  </LuxurySelect>
+                  {brands.length === 0 && <p className="text-xs text-amber-400 mt-1">لا توجد شركات — أضف من قسم الشركات أولاً</p>}
                 </div>
               </div>
 
