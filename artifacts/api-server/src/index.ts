@@ -1,4 +1,8 @@
 import app from "./app";
+import { db } from "@workspace/db";
+import { usersTable } from "@workspace/db/schema";
+import { eq } from "drizzle-orm";
+import bcrypt from "bcryptjs";
 
 const rawPort = process.env["PORT"];
 
@@ -14,6 +18,31 @@ if (Number.isNaN(port) || port <= 0) {
   throw new Error(`Invalid PORT value: "${rawPort}"`);
 }
 
-app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
+async function seedAdmin() {
+  try {
+    const existing = await db.query.usersTable.findFirst({
+      where: eq(usersTable.email, "admin1@test.com"),
+    });
+    if (!existing) {
+      const passwordHash = await bcrypt.hash("admin123", 10);
+      await db.insert(usersTable).values({
+        fullName: "Admin",
+        email: "admin1@test.com",
+        phone: "07700000000",
+        passwordHash,
+        role: "admin",
+      });
+      console.log("Admin account created successfully.");
+    } else {
+      console.log("Admin account already exists.");
+    }
+  } catch (err) {
+    console.error("Failed to seed admin account:", err);
+  }
+}
+
+seedAdmin().then(() => {
+  app.listen(port, () => {
+    console.log(`Server listening on port ${port}`);
+  });
 });
