@@ -78,8 +78,8 @@ export default function AdminSettings() {
             <textarea className="w-full h-24 rounded-xl border border-border bg-background/50 p-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary resize-none" required value={formData.heroSubtitle} onChange={e => setFormData({...formData, heroSubtitle: e.target.value})} />
           </div>
           <div>
-            <label className="text-sm text-muted-foreground mb-2 block">رابط صورة الخلفية (URL)</label>
-            <LuxuryInput value={formData.heroImageUrl} onChange={e => setFormData({...formData, heroImageUrl: e.target.value})} dir="ltr" />
+            <label className="text-sm text-muted-foreground mb-2 block">صورة الخلفية الرئيسية</label>
+            <ImageUploadInput value={formData.heroImageUrl} onChange={val => setFormData({...formData, heroImageUrl: val})} />
           </div>
         </div>
 
