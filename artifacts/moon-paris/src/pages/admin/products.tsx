@@ -2,58 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { AdminLayout } from '@/components/layout/AdminLayout';
 import { useGetProducts, useCreateProduct, useUpdateProduct, useDeleteProduct, type Product } from '@workspace/api-client-react';
 import { LuxuryButton, LuxuryInput, LuxurySelect } from '@/components/ui/luxury-components';
+import { ImageUploadInput } from '@/components/ui/ImageUploadInput';
 
 import { formatPrice } from '@/lib/utils';
-import { Plus, Edit, Trash2, X, Image as ImageIcon, CheckCircle, AlertCircle, Loader } from 'lucide-react';
+import { Plus, Edit, Trash2, X } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { useQueryClient } from '@tanstack/react-query';
 
 const BASE_URL = import.meta.env.BASE_URL?.replace(/\/$/, '') || '';
 interface Brand { id: number; name: string; }
-
-type ImageStatus = 'idle' | 'loading' | 'valid' | 'invalid';
-
-function ImageUrlInput({ value, onChange }: { value: string; onChange: (val: string) => void }) {
-  const [status, setStatus] = useState<ImageStatus>('idle');
-
-  useEffect(() => {
-    if (!value) { setStatus('idle'); return; }
-    setStatus('loading');
-    const img = new Image();
-    const timeout = setTimeout(() => { setStatus('invalid'); }, 5000);
-    img.onload = () => { clearTimeout(timeout); setStatus('valid'); };
-    img.onerror = () => { clearTimeout(timeout); setStatus('invalid'); };
-    img.src = value;
-    return () => clearTimeout(timeout);
-  }, [value]);
-
-  return (
-    <div className="space-y-2">
-      <div className="relative">
-        <LuxuryInput
-          value={value}
-          onChange={e => onChange(e.target.value)}
-          dir="ltr"
-          placeholder="https://..."
-          className={`pe-10 ${status === 'valid' ? 'border-green-500' : status === 'invalid' ? 'border-red-500' : ''}`}
-        />
-        <div className="absolute top-1/2 -translate-y-1/2 left-3 pointer-events-none">
-          {status === 'loading' && <Loader className="w-4 h-4 text-muted-foreground animate-spin" />}
-          {status === 'valid' && <CheckCircle className="w-4 h-4 text-green-500" />}
-          {status === 'invalid' && <AlertCircle className="w-4 h-4 text-red-500" />}
-        </div>
-      </div>
-      {status === 'invalid' && value && (
-        <p className="text-xs text-red-400">رابط الصورة غير صالح أو لا يمكن تحميله</p>
-      )}
-      {status === 'valid' && (
-        <div className="w-full aspect-video rounded-xl overflow-hidden border border-green-500/30 bg-background/50 flex items-center justify-center p-2">
-          <img src={value} alt="preview" className="max-h-40 object-contain" />
-        </div>
-      )}
-    </div>
-  );
-}
 
 export default function AdminProducts() {
   const queryClient = useQueryClient();
@@ -241,8 +198,8 @@ export default function AdminProducts() {
               </div>
 
               <div>
-                <label className="text-sm text-muted-foreground mb-2 block">رابط الصورة (URL)</label>
-                <ImageUrlInput value={formData.imageUrl} onChange={val => setFormData({...formData, imageUrl: val})} />
+                <label className="text-sm text-muted-foreground mb-2 block">صورة المنتج</label>
+                <ImageUploadInput value={formData.imageUrl} onChange={val => setFormData({...formData, imageUrl: val})} />
               </div>
               
               <div>
