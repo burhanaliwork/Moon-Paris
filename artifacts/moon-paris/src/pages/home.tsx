@@ -447,13 +447,10 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            <div className="relative flex items-center justify-center">
-              <div className="aspect-square rounded-full border border-primary/20 p-6 relative z-10 flex items-center justify-center overflow-hidden">
-                <img
-                  src={`${import.meta.env.BASE_URL}images/perfume-featured-nobg.png`}
-                  alt="Featured Perfume"
-                  className="w-full h-full object-contain drop-shadow-2xl"
-                />
+            <div className="relative">
+              <div className="aspect-square rounded-full border border-primary/20 p-4 relative z-10">
+                <img src={`${import.meta.env.BASE_URL}images/perfume-featured-nobg.png`} alt="Quality" className="w-full h-full object-cover rounded-full"
+                  onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1615397323101-38cb56d2cf74?auto=format&fit=crop&q=80&w=800"; }} />
               </div>
               <div className="absolute -inset-4 border border-dashed border-primary/30 rounded-full animate-[spin_60s_linear_infinite] pointer-events-none"></div>
             </div>
