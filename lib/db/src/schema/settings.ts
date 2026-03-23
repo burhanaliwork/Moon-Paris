@@ -14,4 +14,5 @@ export const siteSettingsTable = pgTable("site_settings", {
   stat1Label: text("stat1_label").default("100%"),
   stat2Value: text("stat2_value").default("توصيل سريع"),
   stat2Label: text("stat2_label").default("لكافة محافظات العراق"),
+  infoImageUrl: text("info_image_url"),
 });

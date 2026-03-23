@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { AdminLayout } from '@/components/layout/AdminLayout';
 import { useGetSiteSettings, useUpdateSiteSettings } from '@workspace/api-client-react';
 import { LuxuryButton, LuxuryInput } from '@/components/ui/luxury-components';
+import { ImageUploadInput } from '@/components/ui/ImageUploadInput';
 import { toast } from '@/hooks/use-toast';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -13,7 +14,8 @@ export default function AdminSettings() {
   const [formData, setFormData] = useState({
     siteName: '', heroTitle: '', heroSubtitle: '', heroImageUrl: '',
     contactPhone: '', contactEmail: '', aboutText: '',
-    infoSectionTitle: '', stat1Value: '', stat1Label: '', stat2Value: '', stat2Label: ''
+    infoSectionTitle: '', stat1Value: '', stat1Label: '', stat2Value: '', stat2Label: '',
+    infoImageUrl: ''
   });
 
   useEffect(() => {
@@ -31,6 +33,7 @@ export default function AdminSettings() {
         stat1Label: settings.stat1Label || '',
         stat2Value: settings.stat2Value || '',
         stat2Label: settings.stat2Label || '',
+        infoImageUrl: (settings as any).infoImageUrl || '',
       });
     }
   }, [settings]);
@@ -85,6 +88,11 @@ export default function AdminSettings() {
           <div>
             <label className="text-sm text-muted-foreground mb-2 block">عنوان القسم</label>
             <LuxuryInput value={formData.infoSectionTitle} onChange={e => setFormData({...formData, infoSectionTitle: e.target.value})} placeholder="الجودة الأصيلة، مباشرة من باريس" />
+          </div>
+          <div>
+            <label className="text-sm text-muted-foreground mb-2 block">صورة العطر في الدائرة</label>
+            <p className="text-xs text-muted-foreground/60 mb-3">ارفع صورة العطر التي تريد عرضها في القسم الدائري — ستُزال الخلفية تلقائياً</p>
+            <ImageUploadInput value={formData.infoImageUrl} onChange={val => setFormData({...formData, infoImageUrl: val})} />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>

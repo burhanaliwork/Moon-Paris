@@ -449,7 +449,11 @@ export default function Home() {
             </div>
             <div className="relative">
               <div className="aspect-square rounded-full border border-primary/20 p-4 relative z-10 overflow-hidden bg-gradient-to-b from-zinc-900 via-zinc-800 to-zinc-900">
-                <img src={`${import.meta.env.BASE_URL}images/perfume-featured-nobg.png`} alt="Quality" className="w-full h-full object-contain drop-shadow-2xl" />
+                <img
+                  src={(settings as any)?.infoImageUrl || `${import.meta.env.BASE_URL}images/perfume-featured-nobg.png`}
+                  alt="Quality"
+                  className="w-full h-full object-contain drop-shadow-2xl"
+                />
               </div>
               <div className="absolute -inset-4 border border-dashed border-primary/30 rounded-full animate-[spin_60s_linear_infinite] pointer-events-none"></div>
             </div>
