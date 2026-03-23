@@ -37,11 +37,16 @@ export default function Home() {
   const [samples, setSamples] = useState<SampleProduct[]>([]);
   const [samplesLoading, setSamplesLoading] = useState(false);
 
-  // Brand filter state
+  // Brand filter state (products)
   const [brands, setBrands] = useState<Brand[]>([]);
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
   const [filterOpen, setFilterOpen] = useState(false);
   const filterRef = useRef<HTMLDivElement>(null);
+
+  // Brand filter state (samples)
+  const [selectedSampleBrand, setSelectedSampleBrand] = useState<string | null>(null);
+  const [sampleFilterOpen, setSampleFilterOpen] = useState(false);
+  const sampleFilterRef = useRef<HTMLDivElement>(null);
 
   // Fetch brands
   useEffect(() => {
@@ -72,10 +77,24 @@ export default function Home() {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
+  // Close sample filter on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (sampleFilterRef.current && !sampleFilterRef.current.contains(e.target as Node)) setSampleFilterOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
   // Filtered products
   const filteredProducts = selectedBrand
     ? products.filter((p: any) => p.brand === selectedBrand)
     : products;
+
+  // Filtered samples
+  const filteredSamples = selectedSampleBrand
+    ? samples.filter(s => s.brand === selectedSampleBrand)
+    : samples;
 
   const handleAddProduct = (e: React.MouseEvent, product: any) => {
     e.preventDefault();
@@ -279,22 +298,82 @@ export default function Home() {
           {/* SAMPLES VIEW */}
           {viewMode === 'categories' && (
             <>
-              <div className="mb-8">
-                <h2 className="text-3xl md:text-4xl font-display font-bold gold-gradient-text mb-1">تقسيمات العطور</h2>
-                <p className="text-muted-foreground text-sm">اختر الحجم الذي يناسبك — 3مل، 5مل، أو 10مل</p>
+              <div className="flex items-center justify-between gap-3 mb-8 flex-wrap">
+                <div>
+                  <h2 className="text-3xl md:text-4xl font-display font-bold gold-gradient-text mb-1">
+                    {selectedSampleBrand ? `تقسيمات ${selectedSampleBrand}` : 'تقسيمات العطور'}
+                  </h2>
+                  <p className="text-muted-foreground text-sm">اختر الحجم الذي يناسبك — 3مل، 5مل، أو 10مل</p>
+                </div>
+
+                {brands.length > 0 && (
+                  <div className="relative" ref={sampleFilterRef}>
+                    <button
+                      onClick={() => setSampleFilterOpen(v => !v)}
+                      className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-bold transition-all duration-200 border ${
+                        selectedSampleBrand
+                          ? 'bg-primary text-black border-primary'
+                          : 'border-white/10 text-muted-foreground hover:border-primary/50 hover:text-primary bg-card'
+                      }`}
+                    >
+                      <SlidersHorizontal className="w-4 h-4" />
+                      {selectedSampleBrand || 'فرز بالشركة'}
+                      {selectedSampleBrand && (
+                        <span onClick={(e) => { e.stopPropagation(); setSelectedSampleBrand(null); }}>
+                          <X className="w-3 h-3" />
+                        </span>
+                      )}
+                    </button>
+                    <AnimatePresence>
+                      {sampleFilterOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: 8, scale: 0.95 }}
+                          transition={{ duration: 0.15 }}
+                          className="absolute left-0 top-full mt-2 bg-card border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 min-w-[180px]"
+                        >
+                          <div className="p-2">
+                            <button
+                              onClick={() => { setSelectedSampleBrand(null); setSampleFilterOpen(false); }}
+                              className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm transition-colors ${!selectedSampleBrand ? 'bg-primary/10 text-primary' : 'hover:bg-white/5 text-muted-foreground'}`}
+                            >
+                              الكل {!selectedSampleBrand && <Check className="w-3.5 h-3.5" />}
+                            </button>
+                            {brands.map(brand => (
+                              <button
+                                key={brand.id}
+                                onClick={() => { setSelectedSampleBrand(brand.name); setSampleFilterOpen(false); }}
+                                className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm transition-colors ${selectedSampleBrand === brand.name ? 'bg-primary/10 text-primary' : 'hover:bg-white/5 text-muted-foreground'}`}
+                              >
+                                {brand.name} {selectedSampleBrand === brand.name && <Check className="w-3.5 h-3.5" />}
+                              </button>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                )}
               </div>
+
               {samplesLoading ? (
                 <div className="grid grid-cols-2 gap-4">
                   {[1,2,3,4].map(i => <div key={i} className="animate-pulse bg-card rounded-2xl h-80 border border-white/5"></div>)}
                 </div>
-              ) : samples.length === 0 ? (
+              ) : filteredSamples.length === 0 ? (
                 <div className="text-center py-20 text-muted-foreground">
                   <Layers className="w-16 h-16 mx-auto mb-4 opacity-20" />
-                  <p>لا توجد تقسيمات متاحة حالياً</p>
+                  {selectedSampleBrand ? (
+                    <>
+                      <p>لا توجد تقسيمات لهذه الشركة</p>
+                      <button onClick={() => setSelectedSampleBrand(null)} className="mt-3 text-primary text-sm underline">عرض الكل</button>
+                    </>
+                  ) : <p>لا توجد تقسيمات متاحة حالياً</p>}
                 </div>
               ) : (
                 <div className="grid grid-cols-2 gap-4 md:gap-6">
-                  {samples.map((sample, index) => (
+                  {filteredSamples.map((sample, index) => (
                     <motion.div
                       key={sample.id}
                       initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }}
@@ -368,10 +447,13 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            <div className="relative">
-              <div className="aspect-square rounded-full border border-primary/20 p-4 relative z-10">
-                <img src={`${import.meta.env.BASE_URL}images/perfume-placeholder.png`} alt="Quality" className="w-full h-full object-cover rounded-full"
-                  onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1615397323101-38cb56d2cf74?auto=format&fit=crop&q=80&w=800"; }} />
+            <div className="relative flex items-center justify-center">
+              <div className="aspect-square rounded-full border border-primary/20 p-6 relative z-10 flex items-center justify-center overflow-hidden">
+                <img
+                  src={`${import.meta.env.BASE_URL}images/perfume-featured-nobg.png`}
+                  alt="Featured Perfume"
+                  className="w-full h-full object-contain drop-shadow-2xl"
+                />
               </div>
               <div className="absolute -inset-4 border border-dashed border-primary/30 rounded-full animate-[spin_60s_linear_infinite] pointer-events-none"></div>
             </div>
