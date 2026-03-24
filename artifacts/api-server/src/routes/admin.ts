@@ -2,6 +2,7 @@ import { Router, type IRouter } from "express";
 import { db } from "@workspace/db";
 import { usersTable, productsTable, ordersTable, siteSettingsTable } from "@workspace/db/schema";
 import { eq, count, sql } from "drizzle-orm";
+import bcrypt from "bcryptjs";
 
 const router: IRouter = Router();
 
@@ -146,6 +147,48 @@ router.put("/site-settings", async (req, res) => {
       stat2Label: settings!.stat2Label,
       infoImageUrl: settings!.infoImageUrl,
     });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "server_error", message: "حدث خطأ في الخادم" });
+  }
+});
+
+// Change admin password
+router.post("/change-password", async (req, res) => {
+  try {
+    const userId = (req.session as any)?.userId;
+    if (!userId) return res.status(401).json({ error: "not_authenticated", message: "غير مسجل الدخول" });
+
+    const user = await db.query.usersTable.findFirst({ where: eq(usersTable.id, userId) });
+    if (!user || user.role !== "admin") return res.status(403).json({ error: "forbidden", message: "غير مصرح لك" });
+
+    const { currentPassword, newPassword, confirmPassword } = req.body;
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      return res.status(400).json({ error: "missing_fields", message: "جميع الحقول مطلوبة" });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({ error: "weak_password", message: "كلمة المرور الجديدة يجب أن تكون 6 أحرف على الأقل" });
+    }
+
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({ error: "password_mismatch", message: "كلمة المرور الجديدة وتأكيدها غير متطابقتين" });
+    }
+
+    if (!user.passwordHash) {
+      return res.status(400).json({ error: "no_password", message: "الحساب لا يحتوي على كلمة مرور" });
+    }
+
+    const isMatch = await bcrypt.compare(currentPassword, user.passwordHash);
+    if (!isMatch) {
+      return res.status(401).json({ error: "wrong_password", message: "كلمة المرور الحالية غير صحيحة" });
+    }
+
+    const newHash = await bcrypt.hash(newPassword, 12);
+    await db.update(usersTable).set({ passwordHash: newHash }).where(eq(usersTable.id, user.id));
+
+    return res.json({ message: "تم تغيير كلمة المرور بنجاح" });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: "server_error", message: "حدث خطأ في الخادم" });

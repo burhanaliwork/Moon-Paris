@@ -5,6 +5,9 @@ import { LuxuryButton, LuxuryInput } from '@/components/ui/luxury-components';
 import { ImageUploadInput } from '@/components/ui/ImageUploadInput';
 import { toast } from '@/hooks/use-toast';
 import { useQueryClient } from '@tanstack/react-query';
+import { Eye, EyeOff, KeyRound, CheckCircle2, XCircle } from 'lucide-react';
+
+const BASE_URL = import.meta.env.BASE_URL?.replace(/\/$/, '') || '';
 
 export default function AdminSettings() {
   const queryClient = useQueryClient();
@@ -38,6 +41,11 @@ export default function AdminSettings() {
     }
   }, [settings]);
 
+  // Change password state
+  const [pwData, setPwData] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
+  const [pwShow, setPwShow] = useState({ current: false, newPw: false, confirm: false });
+  const [pwLoading, setPwLoading] = useState(false);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -45,6 +53,35 @@ export default function AdminSettings() {
       toast({ title: "تم تحديث الإعدادات بنجاح" });
     } catch (e: any) {
       toast({ title: "خطأ", description: e.message, variant: "destructive" });
+    }
+  };
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (pwData.newPassword !== pwData.confirmPassword) {
+      toast({ title: "خطأ", description: "كلمة المرور الجديدة وتأكيدها غير متطابقتين", variant: "destructive" });
+      return;
+    }
+    if (pwData.newPassword.length < 6) {
+      toast({ title: "خطأ", description: "كلمة المرور الجديدة يجب أن تكون 6 أحرف على الأقل", variant: "destructive" });
+      return;
+    }
+    setPwLoading(true);
+    try {
+      const res = await fetch(`${BASE_URL}/api/admin/change-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(pwData),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'حدث خطأ');
+      toast({ title: "تم تغيير كلمة المرور بنجاح" });
+      setPwData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+    } catch (err: any) {
+      toast({ title: "خطأ", description: err.message, variant: "destructive" });
+    } finally {
+      setPwLoading(false);
     }
   };
 
@@ -136,6 +173,108 @@ export default function AdminSettings() {
 
         <div className="pt-4 flex justify-end">
           <LuxuryButton type="submit" size="lg" isLoading={updateMutation.isPending}>حفظ التغييرات</LuxuryButton>
+        </div>
+      </form>
+
+      {/* Change Password Card */}
+      <form onSubmit={handleChangePassword} className="mt-8 bg-card border border-white/5 rounded-2xl p-8 max-w-3xl">
+        <div className="flex items-center gap-3 mb-6 border-b border-white/5 pb-4">
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <KeyRound className="w-5 h-5 text-primary" />
+          </div>
+          <div>
+            <h2 className="text-xl font-bold font-display text-foreground">تغيير كلمة المرور</h2>
+            <p className="text-sm text-muted-foreground">يجب إدخال كلمة المرور الحالية للتأكيد</p>
+          </div>
+        </div>
+
+        <div className="space-y-5">
+          {/* Current password */}
+          <div>
+            <label className="text-sm text-muted-foreground mb-2 block">كلمة المرور الحالية</label>
+            <div className="relative">
+              <input
+                type={pwShow.current ? 'text' : 'password'}
+                required
+                value={pwData.currentPassword}
+                onChange={e => setPwData({ ...pwData, currentPassword: e.target.value })}
+                className="w-full rounded-xl border border-border bg-background/50 px-4 py-3 text-sm pr-11 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+                placeholder="أدخل كلمة المرور الحالية"
+                dir="ltr"
+              />
+              <button type="button" tabIndex={-1} onClick={() => setPwShow(s => ({ ...s, current: !s.current }))}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors">
+                {pwShow.current ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+          </div>
+
+          {/* New password */}
+          <div>
+            <label className="text-sm text-muted-foreground mb-2 block">كلمة المرور الجديدة</label>
+            <div className="relative">
+              <input
+                type={pwShow.newPw ? 'text' : 'password'}
+                required
+                value={pwData.newPassword}
+                onChange={e => setPwData({ ...pwData, newPassword: e.target.value })}
+                className="w-full rounded-xl border border-border bg-background/50 px-4 py-3 text-sm pr-11 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+                placeholder="6 أحرف على الأقل"
+                dir="ltr"
+              />
+              <button type="button" tabIndex={-1} onClick={() => setPwShow(s => ({ ...s, newPw: !s.newPw }))}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors">
+                {pwShow.newPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+          </div>
+
+          {/* Confirm password */}
+          <div>
+            <label className="text-sm text-muted-foreground mb-2 block">تأكيد كلمة المرور الجديدة</label>
+            <div className="relative">
+              <input
+                type={pwShow.confirm ? 'text' : 'password'}
+                required
+                value={pwData.confirmPassword}
+                onChange={e => setPwData({ ...pwData, confirmPassword: e.target.value })}
+                className={`w-full rounded-xl border bg-background/50 px-4 py-3 text-sm pr-11 focus:outline-none focus:ring-2 focus:ring-primary transition-colors ${
+                  pwData.confirmPassword && pwData.newPassword !== pwData.confirmPassword
+                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                    : pwData.confirmPassword && pwData.newPassword === pwData.confirmPassword
+                    ? 'border-green-500 focus:border-green-500 focus:ring-green-500'
+                    : 'border-border focus:border-primary'
+                }`}
+                placeholder="أعد إدخال كلمة المرور الجديدة"
+                dir="ltr"
+              />
+              <button type="button" tabIndex={-1} onClick={() => setPwShow(s => ({ ...s, confirm: !s.confirm }))}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors">
+                {pwShow.confirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+              {pwData.confirmPassword && (
+                <div className="absolute left-9 top-1/2 -translate-y-1/2">
+                  {pwData.newPassword === pwData.confirmPassword
+                    ? <CheckCircle2 className="w-4 h-4 text-green-500" />
+                    : <XCircle className="w-4 h-4 text-red-500" />}
+                </div>
+              )}
+            </div>
+            {pwData.confirmPassword && pwData.newPassword !== pwData.confirmPassword && (
+              <p className="text-xs text-red-400 mt-1.5 flex items-center gap-1">
+                <XCircle className="w-3 h-3" /> كلمتا المرور غير متطابقتين
+              </p>
+            )}
+            {pwData.confirmPassword && pwData.newPassword === pwData.confirmPassword && (
+              <p className="text-xs text-green-400 mt-1.5 flex items-center gap-1">
+                <CheckCircle2 className="w-3 h-3" /> كلمتا المرور متطابقتان
+              </p>
+            )}
+          </div>
+        </div>
+
+        <div className="pt-6 flex justify-end">
+          <LuxuryButton type="submit" size="lg" isLoading={pwLoading}>تغيير كلمة المرور</LuxuryButton>
         </div>
       </form>
     </AdminLayout>
