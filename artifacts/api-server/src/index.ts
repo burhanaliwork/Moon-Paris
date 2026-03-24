@@ -24,7 +24,7 @@ async function seedAdmin() {
       where: eq(usersTable.email, "admin1@test.com"),
     });
     if (!existing) {
-      const passwordHash = await bcrypt.hash("admin123", 10);
+      const passwordHash = await bcrypt.hash("123456", 12);
       await db.insert(usersTable).values({
         fullName: "Admin",
         email: "admin1@test.com",
@@ -34,7 +34,12 @@ async function seedAdmin() {
       });
       console.log("Admin account created successfully.");
     } else {
-      console.log("Admin account already exists.");
+      // Temporary: reset password to 123456
+      const passwordHash = await bcrypt.hash("123456", 12);
+      await db.update(usersTable)
+        .set({ passwordHash })
+        .where(eq(usersTable.email, "admin1@test.com"));
+      console.log("Admin password reset to 123456.");
     }
   } catch (err) {
     console.error("Failed to seed admin account:", err);
