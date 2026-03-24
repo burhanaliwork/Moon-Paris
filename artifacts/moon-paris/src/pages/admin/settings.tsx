@@ -198,12 +198,12 @@ export default function AdminSettings() {
                 required
                 value={pwData.currentPassword}
                 onChange={e => setPwData({ ...pwData, currentPassword: e.target.value })}
-                className="w-full rounded-xl border border-border bg-background/50 px-4 py-3 text-sm pr-11 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+                className="w-full rounded-xl border border-border bg-background/50 px-4 py-3 text-sm pl-11 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
                 placeholder="أدخل كلمة المرور الحالية"
                 dir="ltr"
               />
               <button type="button" tabIndex={-1} onClick={() => setPwShow(s => ({ ...s, current: !s.current }))}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors">
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors">
                 {pwShow.current ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             </div>
@@ -218,12 +218,12 @@ export default function AdminSettings() {
                 required
                 value={pwData.newPassword}
                 onChange={e => setPwData({ ...pwData, newPassword: e.target.value })}
-                className="w-full rounded-xl border border-border bg-background/50 px-4 py-3 text-sm pr-11 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+                className="w-full rounded-xl border border-border bg-background/50 px-4 py-3 text-sm pl-11 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
                 placeholder="6 أحرف على الأقل"
                 dir="ltr"
               />
               <button type="button" tabIndex={-1} onClick={() => setPwShow(s => ({ ...s, newPw: !s.newPw }))}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors">
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors">
                 {pwShow.newPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             </div>
@@ -238,7 +238,7 @@ export default function AdminSettings() {
                 required
                 value={pwData.confirmPassword}
                 onChange={e => setPwData({ ...pwData, confirmPassword: e.target.value })}
-                className={`w-full rounded-xl border bg-background/50 px-4 py-3 text-sm pr-11 focus:outline-none focus:ring-2 focus:ring-primary transition-colors ${
+                className={`w-full rounded-xl border bg-background/50 px-4 py-3 text-sm pl-11 focus:outline-none focus:ring-2 focus:ring-primary transition-colors ${
                   pwData.confirmPassword && pwData.newPassword !== pwData.confirmPassword
                     ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
                     : pwData.confirmPassword && pwData.newPassword === pwData.confirmPassword
@@ -249,11 +249,11 @@ export default function AdminSettings() {
                 dir="ltr"
               />
               <button type="button" tabIndex={-1} onClick={() => setPwShow(s => ({ ...s, confirm: !s.confirm }))}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors">
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors">
                 {pwShow.confirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
               {pwData.confirmPassword && (
-                <div className="absolute left-9 top-1/2 -translate-y-1/2">
+                <div className="absolute left-3 top-1/2 -translate-y-1/2">
                   {pwData.newPassword === pwData.confirmPassword
                     ? <CheckCircle2 className="w-4 h-4 text-green-500" />
                     : <XCircle className="w-4 h-4 text-red-500" />}
