@@ -20,3 +20,4 @@ export interface SiteSettings {
   stat2Value?: string | null;
   stat2Label?: string | null;
 }
+//update 
