@@ -5,7 +5,7 @@ import { LuxuryButton, LuxuryInput, LuxurySelect } from '@/components/ui/luxury-
 import { ImageUploadInput } from '@/components/ui/ImageUploadInput';
 
 import { formatPrice } from '@/lib/utils';
-import { Plus, Edit, Trash2, X } from 'lucide-react';
+import { Plus, Edit, Trash2, X, ImageIcon } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { useQueryClient } from '@tanstack/react-query';
 

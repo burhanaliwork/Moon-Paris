@@ -11,7 +11,7 @@ export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [, setLocation] = useLocation();
   const cart = useStore(state => state.cart);
-  const { data: user } = useGetMe({ query: { retry: false } });
+  const { data: user } = useGetMe({ query: { queryKey: ['/api/auth/me'], retry: false } });
   const logoutMutation = useLogoutUser();
   const cartCount = cart.reduce((acc, item) => acc + item.cartQuantity, 0);
 

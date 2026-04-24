@@ -23,7 +23,7 @@ import AdminPromotions from "@/pages/admin/promotions";
 const queryClient = new QueryClient();
 
 function ProtectedRoute({ component: Component, returnTo }: { component: React.ComponentType; returnTo?: string }) {
-  const { data: user, isLoading } = useGetMe({ query: { retry: false } });
+  const { data: user, isLoading } = useGetMe({ query: { queryKey: ['/api/auth/me'], retry: false } });
   const [, setLoc] = useLocation();
 
   React.useEffect(() => {

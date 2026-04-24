@@ -15,7 +15,7 @@ export default function ProductPage() {
   const productId = parseInt(params?.id || '0', 10);
   
   const { data: product, isLoading, isError } = useGetProduct(productId, { 
-    query: { enabled: !!productId } 
+    query: { queryKey: [`/api/products/${productId}`], enabled: !!productId } 
   });
   
   const addProductToCart = useStore(state => state.addProductToCart);

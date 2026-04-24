@@ -6,7 +6,7 @@ import { useLogoutUser, useGetMe } from '@workspace/api-client-react';
 export function AdminLayout({ children }: { children: React.ReactNode }) {
   const [location, setLocation] = useLocation();
   const logoutMutation = useLogoutUser();
-  const { data: user, isLoading } = useGetMe({ query: { retry: false } });
+  const { data: user, isLoading } = useGetMe({ query: { queryKey: ['/api/auth/me'], retry: false } });
 
   React.useEffect(() => {
     if (!isLoading && (!user || user.role !== 'admin')) {
