@@ -24,7 +24,7 @@ if (!isBuild && !basePath) {
 }
 
 export default defineConfig({
-  base: basePath,
+  base: basePath || "/",
   plugins: [
     react(),
     tailwindcss(),
